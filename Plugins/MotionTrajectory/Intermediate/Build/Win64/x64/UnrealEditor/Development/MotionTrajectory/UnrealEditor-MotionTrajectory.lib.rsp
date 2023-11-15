@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-MotionTrajectory.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"E:\UEProj\GPU_MM_Emotion\Intermediate\Build\Win64\x64\GPU_MM_EmotionEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h.obj"
+"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp.obj"
+"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Default.rc2.res"
+/OUT:"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\UnrealEditor-MotionTrajectory.lib"
