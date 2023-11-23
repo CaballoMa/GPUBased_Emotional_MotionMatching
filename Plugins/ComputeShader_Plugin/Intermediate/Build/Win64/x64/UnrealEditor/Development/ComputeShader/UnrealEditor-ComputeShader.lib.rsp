@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-ComputeShader.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Intermediate\Build\Win64\x64\ComputeShader53Editor\Development\Engine\SharedPCH.Engine.Cpp20.h.obj"
+"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\ComputeShader_Plugin\Intermediate\Build\Win64\x64\UnrealEditor\Development\ComputeShader\Module.ComputeShader.cpp.obj"
+"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\ComputeShader_Plugin\Intermediate\Build\Win64\x64\UnrealEditor\Development\ComputeShader\Default.rc2.res"
+/OUT:"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\ComputeShader_Plugin\Intermediate\Build\Win64\x64\UnrealEditor\Development\ComputeShader\UnrealEditor-ComputeShader.lib"

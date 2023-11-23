@@ -35,5 +35,25 @@ public class PoseSearch : ModuleRules
 				}
 			);
 		}
-	}
+		
+		PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"CoreUObject",
+				"Renderer",
+				"RenderCore",
+				"RHI",
+				"Projects",
+				"UnrealEd",
+				"MaterialUtilities",
+				"SlateCore",
+				"Slate",
+                "ComputeShader",
+                "ShadeupExamplePlugin"
+            }
+		);
+
+
+        
+    }
 }

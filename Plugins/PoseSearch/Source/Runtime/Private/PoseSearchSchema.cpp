@@ -26,15 +26,41 @@ void UPoseSearchSchema::AddTemporaryChannel(UPoseSearchFeatureChannel* Temporary
 
 void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext, UE::PoseSearch::FFeatureVectorBuilder& InOutQuery) const
 {
+	//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), SchemaCardinality);
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_PoseSearch_BuildQuery);
-
+	TConstArrayView<float> curr_query;
 	check(InOutQuery.GetSchema() == this);
 	check(InOutQuery.GetValues().Num() == SchemaCardinality);
+	//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), SchemaCardinality);
 
 	for (const TObjectPtr<UPoseSearchFeatureChannel>& ChannelPtr : GetChannels())
 	{
+		
+		//added Han Wang
+		UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), *ChannelPtr.GetName());
+		if (ChannelPtr.GetName() == "PoseSearchFeatureChannel_Trajectory_0") {
+
+		}
+		else if(ChannelPtr.GetName() == "PoseSearchFeatureChannel_Pose_0"){
+
+			//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), ChannelPtr->GetChannelDataOffset());
+		}
 		ChannelPtr->BuildQuery(SearchContext, InOutQuery);
+		curr_query = InOutQuery.GetValues();
+
+
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));
+
+	
+}
+
+void UPoseSearchSchema::BuildPoseDataBase_personal()
+{
+}
+
+void UPoseSearchSchema::BuildTrajectory_personal()
+{
 }
 
 FBoneIndexType UPoseSearchSchema::GetBoneIndexType(int8 SchemaBoneIdx) const

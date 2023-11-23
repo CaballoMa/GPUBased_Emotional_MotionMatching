@@ -14,7 +14,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define MOTIONTRAJECTORY_MotionTrajectory_generated_h
 
-#define FID_UEProj_GPU_MM_Emotion_Plugins_MotionTrajectory_Source_MotionTrajectory_Public_MotionTrajectory_h_27_GENERATED_BODY \
+#define FID_ComputeShader53_Plugins_MotionTrajectory_Source_MotionTrajectory_Public_MotionTrajectory_h_27_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FMotionTrajectorySettings_Statics; \
 	static class UScriptStruct* StaticStruct();
 
@@ -22,7 +22,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 template<> MOTIONTRAJECTORY_API UScriptStruct* StaticStruct<struct FMotionTrajectorySettings>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_UEProj_GPU_MM_Emotion_Plugins_MotionTrajectory_Source_MotionTrajectory_Public_MotionTrajectory_h
+#define CURRENT_FILE_ID FID_ComputeShader53_Plugins_MotionTrajectory_Source_MotionTrajectory_Public_MotionTrajectory_h
 
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

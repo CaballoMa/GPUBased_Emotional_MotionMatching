@@ -13,12 +13,12 @@ FLinearColor UAnimGraphNode_MotionMatching::GetNodeTitleColor() const
 
 FText UAnimGraphNode_MotionMatching::GetTooltipText() const
 {
-	return LOCTEXT("NodeToolTip", "Motion Matching");
+	return LOCTEXT("NodeToolTip", "Motion Matching Personal");
 }
 
 FText UAnimGraphNode_MotionMatching::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return LOCTEXT("NodeTitle", "Motion Matching");
+	return LOCTEXT("NodeTitle", "Motion Matching Personal");
 }
 
 FText UAnimGraphNode_MotionMatching::GetMenuCategory() const

@@ -1,0 +1,11 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.ComputeShader.cpp.obj": [
+			"ComputeShader.init.gen.cpp.obj",
+			"ExampleComputeShader.gen.cpp.obj",
+			"ComputeShader.cpp.obj",
+			"ExampleComputeShader.cpp.obj"
+		]
+	}
+}

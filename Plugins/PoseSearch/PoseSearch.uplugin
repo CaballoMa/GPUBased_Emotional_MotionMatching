@@ -19,7 +19,11 @@
 		{
 			"Name": "PoseSearch",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "PreDefault",
+			"AdditionalDependencies": [
+				"ShadeupExamplePlugin"
+
+			]
 		},
 		{
 			"Name": "PoseSearchEditor",
@@ -37,6 +41,10 @@
 		},
 		{
 			"Name": "StructUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "ShadeupExamplePlugin",
 			"Enabled": true
 		}
 	]

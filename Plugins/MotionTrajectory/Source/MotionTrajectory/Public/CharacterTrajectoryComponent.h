@@ -38,7 +38,7 @@ public:
 protected:
 	UFUNCTION()
 	void OnMovementUpdated(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
-	void DebugLogFunc();
+
 	void UpdateHistory(float DeltaSeconds);
 	void UpdatePrediction(const FVector& PositionWS, const FQuat& FacingWS, const FVector& VelocityWS, const FVector& AccelerationWS, const FRotator& ControllerRotationRate);
 

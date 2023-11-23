@@ -1,0 +1,8 @@
+{
+	"BuildId": "27405482",
+	"Modules": 
+	{
+		"ComputeShader": "UnrealEditor-ComputeShader.dll",
+		"ShadeupExamplePlugin": "UnrealEditor-ShadeupExamplePlugin.dll"
+	}
+}

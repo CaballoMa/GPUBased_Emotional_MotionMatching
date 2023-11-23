@@ -1,11 +1,11 @@
-"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp"
-/FI"E:\UEProj\GPU_MM_Emotion\Intermediate\Build\Win64\x64\GPU_MM_EmotionEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h"
-/FI"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Definitions.MotionTrajectory.h"
-/Yu"E:\UEProj\GPU_MM_Emotion\Intermediate\Build\Win64\x64\GPU_MM_EmotionEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h"
-/Fp"E:\UEProj\GPU_MM_Emotion\Intermediate\Build\Win64\x64\GPU_MM_EmotionEditor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h.pch"
-/Fo"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp.obj"
-/sourceDependencies "E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp.dep.json"
-@"E:\UEProj\GPU_MM_Emotion\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\MotionTrajectory.Shared.rsp"
+"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp"
+/FI"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Intermediate\Build\Win64\x64\ComputeShader53Editor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h"
+/FI"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Definitions.MotionTrajectory.h"
+/Yu"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Intermediate\Build\Win64\x64\ComputeShader53Editor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h"
+/Fp"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Intermediate\Build\Win64\x64\ComputeShader53Editor\Development\UnrealEd\SharedPCH.UnrealEd.Cpp20.h.pch"
+/Fo"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp.obj"
+/sourceDependencies "C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\Module.MotionTrajectory.cpp.dep.json"
+@"C:\Users\Han Wang\Documents\Unreal Projects\ComputeShader53\Plugins\MotionTrajectory\Intermediate\Build\Win64\x64\UnrealEditor\Development\MotionTrajectory\MotionTrajectory.Shared.rsp"
 /Zc:inline
 /nologo
 /Oi

@@ -1,4 +1,4 @@
-#include "E:/UEProj/GPU_MM_Emotion/Intermediate/Build/Win64/x64/GPU_MM_EmotionEditor/Development/UnrealEd/SharedDefinitions.UnrealEd.Cpp20.h"
+#include "C:/Users/Han Wang/Documents/Unreal Projects/ComputeShader53/Intermediate/Build/Win64/x64/ComputeShader53Editor/Development/UnrealEd/SharedDefinitions.UnrealEd.Cpp20.h"
 #undef UE_IS_ENGINE_MODULE
 #undef DEPRECATED_FORGAME
 #define DEPRECATED_FORGAME DEPRECATED
@@ -13,8 +13,8 @@
 #define UE_ENABLE_INCLUDE_ORDER_DEPRECATED_IN_5_1 0
 #define UE_ENABLE_INCLUDE_ORDER_DEPRECATED_IN_5_2 0
 #define UE_ENABLE_INCLUDE_ORDER_DEPRECATED_IN_5_3 0
-#define UE_PROJECT_NAME GPU_MM_Emotion
-#define UE_TARGET_NAME GPU_MM_EmotionEditor
+#define UE_PROJECT_NAME ComputeShader53
+#define UE_TARGET_NAME ComputeShader53Editor
 #define UE_MODULE_NAME "PoseSearch"
 #define UE_PLUGIN_NAME "PoseSearch"
 #define IMPLEMENT_ENCRYPTION_KEY_REGISTRATION() 
@@ -34,3 +34,5 @@
 #define POSESEARCH_API DLLEXPORT
 #define ANIMGRAPHRUNTIME_API DLLIMPORT
 #define STRUCTUTILS_API DLLIMPORT
+#define COMPUTESHADER_API DLLIMPORT
+#define SHADEUPEXAMPLEPLUGIN_API DLLIMPORT

@@ -126,11 +126,6 @@ void UCharacterTrajectoryComponent::BeginPlay()
 	}
 }
 
-void UCharacterTrajectoryComponent::DebugLogFunc()
-{
-	
-}
-
 void UCharacterTrajectoryComponent::UpdateTrajectory(float DeltaSeconds)
 {
 	if (!ensure(CharacterMovementComponent != nullptr && SkelMeshComponent != nullptr))
@@ -149,7 +144,6 @@ void UCharacterTrajectoryComponent::UpdateTrajectory(float DeltaSeconds)
 		
 	UpdateHistory(DeltaSeconds);
 	UpdatePrediction(SkelMeshComponentLocationWS, FacingWS, CharacterMovementComponent->Velocity, CharacterMovementComponent->GetCurrentAcceleration(), ControllerRotationRate);
-	Trajectory.DebugDrawTrajectory(GetWorld());
 
 #if ENABLE_ANIM_DEBUG
 	if (CVarCharacterTrajectoryDebug.GetValueOnAnyThread())
@@ -232,26 +226,6 @@ void UCharacterTrajectoryComponent::UpdatePrediction(const FVector& PositionWS, 
 				CurrentFacingWS = FMath::QInterpConstantTo(CurrentFacingWS, CurrentAccelerationCS.ToOrientationQuat(), SecondsPerPredictionSample, RotateTowardsMovementSpeed);
 			}
 		}
-	}
-
-	if (GEngine)
-	{
-		const float TimeToDisplay = 0;
-
-		// Velocity
-		const FString VelocityMessage = FString::Printf(TEXT("Velocity: X=%.2f Y=%.2f Z=%.2f"),
-			CurrentVelocityWS.X, CurrentVelocityWS.Y, CurrentVelocityWS.Z);
-		GEngine->AddOnScreenDebugMessage(1, TimeToDisplay, FColor::Green, VelocityMessage);
-
-		// Facing (Quaternion)
-		const FString FacingMessage = FString::Printf(TEXT("Facing: X=%.2f Y=%.2f Z=%.2f W=%.2f"),
-			CurrentFacingWS.X, CurrentFacingWS.Y, CurrentFacingWS.Z, CurrentFacingWS.W);
-		GEngine->AddOnScreenDebugMessage(2, TimeToDisplay, FColor::Red, FacingMessage);
-
-		const float CapsuleHeight = 100.0f;
-		const float CapsuleRadius = 30.0f;
-		const float Duration = 0.0f;
-		DrawDebugCapsule(GetWorld(), PositionWS + FVector(0, 0, 55.f), CapsuleHeight, CapsuleRadius, FQuat::Identity, FColor::Blue, false, Duration);
 	}
 }
 

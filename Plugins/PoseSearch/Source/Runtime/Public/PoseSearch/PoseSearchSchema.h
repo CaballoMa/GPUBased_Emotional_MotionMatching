@@ -144,6 +144,11 @@ public:
 
 	void BuildQuery(UE::PoseSearch::FSearchContext& SearchContext, UE::PoseSearch::FFeatureVectorBuilder& InOutQuery) const;
 
+
+	void BuildPoseDataBase_personal();
+	void BuildTrajectory_personal();
+
+
 	FBoneIndexType GetBoneIndexType(int8 SchemaBoneIdx) const;
 
 	bool IsRootBone(int8 SchemaBoneIdx) const;

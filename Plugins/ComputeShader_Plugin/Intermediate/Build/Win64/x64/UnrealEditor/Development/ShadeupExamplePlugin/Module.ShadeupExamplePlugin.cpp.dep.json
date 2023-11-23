@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\han wang\\documents\\unreal projects\\computeshader53\\plugins\\computeshader_plugin\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shadeupexampleplugin\\module.shadeupexampleplugin.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\han wang\\documents\\unreal projects\\computeshader53\\intermediate\\build\\win64\\x64\\computeshader53editor\\development\\engine\\sharedpch.engine.cpp20.h.pch",
+        "Includes": [
+            "c:\\users\\han wang\\documents\\unreal projects\\computeshader53\\plugins\\computeshader_plugin\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shadeupexampleplugin\\definitions.shadeupexampleplugin.h",
+            "c:\\users\\han wang\\documents\\unreal projects\\computeshader53\\plugins\\computeshader_plugin\\source\\shadeuptestplugin\\private\\shadeupexampleplugin.cpp",
+            "c:\\users\\han wang\\documents\\unreal projects\\computeshader53\\plugins\\computeshader_plugin\\source\\shadeuptestplugin\\public\\shadeupexampleplugin.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

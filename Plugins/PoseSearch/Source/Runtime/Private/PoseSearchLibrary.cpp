@@ -46,10 +46,11 @@ void FMotionMatchingState::Reset(const FTransform& ComponentTransform)
 	AnimationDeltaYaw = 0.f;
 
 	PoseIndicesHistory.Reset();
-
+/*
 #if UE_POSE_SEARCH_TRACE_ENABLED
 	RootMotionTransformDelta = FTransform::Identity;
 #endif // UE_POSE_SEARCH_TRACE_ENABLED
+*/
 }
 
 void FMotionMatchingState::AdjustAssetTime(float AssetTime)
@@ -339,6 +340,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 			if (ensure(Database))
 			{
 				FSearchResult NewSearchResult = Database->Search(SearchContext);
+				FExampleComputeShaderInterface::check_connection();
 				if (NewSearchResult.PoseCost.GetTotalCost() < SearchResult.PoseCost.GetTotalCost())
 				{
 					bJumpToPose = true;
@@ -376,7 +378,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 	InOutMotionMatchingState.UpdateWantedPlayRate(SearchContext, PlayRate, TrajectorySpeedMultiplier);
 
 	InOutMotionMatchingState.PoseIndicesHistory.Update(InOutMotionMatchingState.CurrentSearchResult, DeltaTime, PoseReselectHistory);
-
+/*
 #if UE_POSE_SEARCH_TRACE_ENABLED
 	// Record debugger details
 	if (IsTracing(Context))
@@ -390,7 +392,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 			AnimInstance ? FObjectTrace::GetWorldElapsedTime(AnimInstance->GetWorld()) : 0.f, SearchBestCost, SearchBruteForceCost, InOutMotionMatchingState.CurrentSearchResult.BestPosePos);
 	}
 #endif
-
+*/
 #if WITH_EDITORONLY_DATA && ENABLE_ANIM_DEBUG
 	const FSearchResult& CurResult = InOutMotionMatchingState.CurrentSearchResult;
 	if ((bDebugDrawQuery || bDebugDrawCurResult) && CurResult.Database != nullptr)

@@ -13,7 +13,10 @@
 #include "PoseSearch/PoseSearchResult.h"
 #include "SequenceEvaluatorLibrary.h"
 #include "SequencePlayerLibrary.h"
-#include "PoseSearchLibrary.generated.h"
+#include "ExampleComputeShader/ExampleComputeShader.h"
+#include "PoseSearchLibrary.generated.h" 
+//#include "../../../../../ComputeShader_Plugin/Source/ComputeShader/Public/ExampleComputeShader/ExampleComputeShader.h"
+
 
 namespace UE::PoseSearch
 {
@@ -22,6 +25,12 @@ namespace UE::PoseSearch
 
 struct FAnimationUpdateContext;
 struct FPoseSearchQueryTrajectory;
+
+// Han Wang added ---------------
+struct dataForComputeShader {
+	TArray<TArray<float>> current_query_data;
+
+};
 
 USTRUCT(BlueprintType, Category="Animation|Pose Search")
 struct POSESEARCH_API FMotionMatchingState
@@ -70,7 +79,7 @@ struct POSESEARCH_API FMotionMatchingState
 
 #if UE_POSE_SEARCH_TRACE_ENABLED
 	// Root motion delta for currently playing animation (or animation tree if from the blend stack)
-	FTransform RootMotionTransformDelta = FTransform::Identity;
+	FTransform Ff = FTransform::Identity;
 #endif //UE_POSE_SEARCH_TRACE_ENABLED
 };
 
@@ -102,6 +111,10 @@ class POSESEARCH_API UPoseSearchLibrary : public UBlueprintFunctionLibrary
 		float RootBoneDeltaYaw,
 		float YawFromAnimationTrajectoryBlendTime,
 		float TrajectorySpeedMultiplier);
+private:
+	// Han Wang added ---------------
+	dataForComputeShader m_data;
+	FExampleComputeShaderInterface myInterface;
 
 public:
 	/**

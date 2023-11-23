@@ -108,6 +108,8 @@ public:
 	int32 GetChannelCardinality() const { checkSlow(ChannelCardinality >= 0); return ChannelCardinality; }
 	int32 GetChannelDataOffset() const { checkSlow(ChannelDataOffset >= 0); return ChannelDataOffset; }
 
+	int32 GetChannelDataOffset_personal() { return ChannelDataOffset; }
+
 	// Called during UPoseSearchSchema::Finalize to prepare the schema for this channel
 	virtual void Finalize(UPoseSearchSchema* Schema) PURE_VIRTUAL(UPoseSearchFeatureChannel::Finalize, );
 	
