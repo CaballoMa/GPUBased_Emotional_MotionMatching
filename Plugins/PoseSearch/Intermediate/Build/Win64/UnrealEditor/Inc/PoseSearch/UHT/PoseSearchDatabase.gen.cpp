@@ -1028,6 +1028,10 @@ template<> POSESEARCH_API UScriptStruct* StaticStruct<FPoseSearchDatabaseAnimMon
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DataBaseIndex_MetaData[];
+#endif
+		static const UECodeGen_Private::FIntPropertyParams NewProp_DataBaseIndex;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Schema_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_Schema;
@@ -1113,6 +1117,19 @@ template<> POSESEARCH_API UScriptStruct* StaticStruct<FPoseSearchDatabaseAnimMon
 #endif
 	};
 #endif
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_DataBaseIndex_MetaData[] = {
+		{ "Category", "Preview" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//Used for Compute shader\n" },
+#endif
+		{ "ModuleRelativePath", "Public/PoseSearch/PoseSearchDatabase.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Used for Compute shader" },
+#endif
+	};
+#endif
+	const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_DataBaseIndex = { "DataBaseIndex", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPoseSearchDatabase, DataBaseIndex), METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_DataBaseIndex_MetaData), Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_DataBaseIndex_MetaData) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_Schema_MetaData[] = {
 		{ "Category", "Database" },
@@ -1283,6 +1300,7 @@ template<> POSESEARCH_API UScriptStruct* StaticStruct<FPoseSearchDatabaseAnimMon
 	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_NormalizationSet = { "NormalizationSet", nullptr, (EPropertyFlags)0x0014000800000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPoseSearchDatabase, NormalizationSet), Z_Construct_UClass_UPoseSearchNormalizationSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_NormalizationSet_MetaData), Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_NormalizationSet_MetaData) };
 #endif // WITH_EDITORONLY_DATA
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPoseSearchDatabase_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_DataBaseIndex,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_Schema,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPoseSearchDatabase_Statics::NewProp_ExcludeFromDatabaseParameters,
 #if WITH_EDITORONLY_DATA
@@ -1357,9 +1375,9 @@ template<> POSESEARCH_API UScriptStruct* StaticStruct<FPoseSearchDatabaseAnimMon
 		{ FPoseSearchDatabaseAnimMontage::StaticStruct, Z_Construct_UScriptStruct_FPoseSearchDatabaseAnimMontage_Statics::NewStructOps, TEXT("PoseSearchDatabaseAnimMontage"), &Z_Registration_Info_UScriptStruct_PoseSearchDatabaseAnimMontage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPoseSearchDatabaseAnimMontage), 1811643569U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPoseSearchDatabase, UPoseSearchDatabase::StaticClass, TEXT("UPoseSearchDatabase"), &Z_Registration_Info_UClass_UPoseSearchDatabase, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPoseSearchDatabase), 403820534U) },
+		{ Z_Construct_UClass_UPoseSearchDatabase, UPoseSearchDatabase::StaticClass, TEXT("UPoseSearchDatabase"), &Z_Registration_Info_UClass_UPoseSearchDatabase, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPoseSearchDatabase), 2725118900U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_4006612685(TEXT("/Script/PoseSearch"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_1514014799(TEXT("/Script/PoseSearch"),
 		Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::ClassInfo),
 		Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::ScriptStructInfo),
 		Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_ComputeShader53_Plugins_PoseSearch_Source_Runtime_Public_PoseSearch_PoseSearchDatabase_h_Statics::EnumInfo));

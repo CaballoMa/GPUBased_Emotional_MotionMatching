@@ -8,6 +8,8 @@
 #include "PoseSearch/PoseSearchIndex.h"
 #include "PoseSearch/PoseSearchResult.h"
 #include "PoseSearchDatabase.generated.h"
+#include "PoseSearchLibrary.h"
+
 
 struct FInstancedStruct;
 class UAnimationAsset;
@@ -345,7 +347,7 @@ public:
 	virtual void Serialize(FArchive& Ar) override;
 	// End UObject
 	
-	UE::PoseSearch::FSearchResult Search(UE::PoseSearch::FSearchContext& SearchContext) const;
+	UE::PoseSearch::FSearchResult Search(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
 	FPoseSearchCost SearchContinuingPose(UE::PoseSearch::FSearchContext& SearchContext) const;
 
 #if WITH_EDITOR
@@ -365,4 +367,7 @@ public:
 private:
 	UE::PoseSearch::FSearchResult SearchPCAKDTree(UE::PoseSearch::FSearchContext& SearchContext) const;
 	UE::PoseSearch::FSearchResult SearchBruteForce(UE::PoseSearch::FSearchContext& SearchContext) const;
+
+	//Han Wang Added
+	void collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
 };

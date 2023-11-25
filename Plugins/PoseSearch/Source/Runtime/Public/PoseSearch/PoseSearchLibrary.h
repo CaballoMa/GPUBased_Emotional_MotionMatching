@@ -14,7 +14,11 @@
 #include "SequenceEvaluatorLibrary.h"
 #include "SequencePlayerLibrary.h"
 #include "ExampleComputeShader/ExampleComputeShader.h"
-#include "PoseSearchLibrary.generated.h" 
+#include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
+
+#include "PoseSearchLibrary.generated.h"
+
+
 //#include "../../../../../ComputeShader_Plugin/Source/ComputeShader/Public/ExampleComputeShader/ExampleComputeShader.h"
 
 
@@ -28,12 +32,23 @@ struct FPoseSearchQueryTrajectory;
 
 // Han Wang added ---------------
 struct dataInComputeShader {
+
+	TArray<dataInPoseValueArray> poseValueArray;
+	TArray<dataInQueryArray> queryArray;
+};
+
+struct dataInPoseValueArray {
 	int32 databaseIndex;
 	int32 poseIdx;
-	float weight;
-	TArray<float> database_query_data;
-	TArray<float> trajectory_query_data;
+	TConstArrayView<float> poseValues;
 };
+
+struct dataInQueryArray {
+	int32 databaseIndex;
+	int32 poseIdx;
+	TConstArrayView<float> queryValues;
+};
+
 
 struct dataOutComputeShader {
 	int32 databaseIndex;
@@ -123,6 +138,9 @@ class POSESEARCH_API UPoseSearchLibrary : public UBlueprintFunctionLibrary
 private:
 	// Han Wang added ---------------
 	FExampleComputeShaderInterface myInterface;
+	TArray<dataInComputeShader> curr_TextureData;
+
+	void build_compute_in_data();
 
 public:
 	/**

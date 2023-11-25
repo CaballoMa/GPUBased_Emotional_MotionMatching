@@ -642,7 +642,7 @@ float UPoseSearchDatabase::GetNormalizedAssetTime(int32 PoseIdx) const
 	return AssetTime;
 }
 
-UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearchContext& SearchContext) const
+UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& computeShader_input, int dataBaseIndex) const
 {
 	using namespace UE::PoseSearch;
 
@@ -657,9 +657,10 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 
 	if (PoseSearchMode == EPoseSearchMode::BruteForce || PoseSearchMode == EPoseSearchMode::PCAKDTree_Compare)
 	{
+		collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
 		Result = SearchBruteForce(SearchContext);
 	}
-
+	/*
 	if (PoseSearchMode != EPoseSearchMode::BruteForce)
 	{
 #if UE_POSE_SEARCH_TRACE_ENABLED
@@ -676,7 +677,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		}
 #endif // UE_POSE_SEARCH_TRACE_ENABLED
 	}
-	
+	*/
 	return Result;
 }
 
@@ -697,8 +698,8 @@ static inline void EvaluatePoseComputeShader(UE::PoseSearch::FSearchResult& Resu
 		dataInComputeShader inData;
 		inData->databaseIndex = this->DataBaseIndex;
 		inData->poseIdx = PoseIdx;
-		database_query_data = PoseValues;
-		trajectory_query_data = QueryValues;
+		inData->database_query_data = PoseValues;
+		inData->trajectory_query_data = QueryValues;
 
 		const FPoseSearchCost PoseCost;
 		//PoseCost = bAlignedAndPadded ? SearchIndex.CompareAlignedPoses(PoseIdx, 0.f, PoseValues, QueryValues) : SearchIndex.ComparePoses(PoseIdx, 0.f, PoseValues, QueryValues);
@@ -968,6 +969,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::SearchBruteForce(UE::PoseSear
 		const bool bUpdateBestCandidates = PoseSearchMode == EPoseSearchMode::BruteForce;
 
 		// do we need to reconstruct pose values?
+
 		if (SearchIndex.Values.IsEmpty())
 		{
 			// FMemory_Alloca is forced 16 bytes aligned
@@ -1021,4 +1023,56 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::SearchBruteForce(UE::PoseSear
 #endif // UE_POSE_SEARCH_TRACE_ENABLED
 
 	return Result;
+}
+
+void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& computeShader_input, int dataBaseIndex) const
+{
+	SCOPE_CYCLE_COUNTER(STAT_PoseSearch_BruteForce);
+
+	using namespace UE::PoseSearch;
+
+	const FSearchIndex& SearchIndex = GetSearchIndex();
+
+	// since any PoseCost calculated here is at least SearchIndex.MinCostAddend,
+	// there's no point in performing the search if CurrentBestTotalCost is already better than that
+	if (!GetSkipSearchIfPossible() || SearchContext.GetCurrentBestTotalCost() > SearchIndex.MinCostAddend)
+	{
+		TConstArrayView<float> QueryValues = SearchContext.GetOrBuildQuery(Schema).GetValues();
+
+		FNonSelectableIdx NonSelectableIdx;
+		PopulateNonSelectableIdx(NonSelectableIdx, SearchContext, this
+#if UE_POSE_SEARCH_TRACE_ENABLED
+			, QueryValues
+#endif // UE_POSE_SEARCH_TRACE_ENABLED
+		);
+		check(Algo::IsSorted(NonSelectableIdx));
+
+		TConstArrayView<float> QueryValues = SearchContext.GetOrBuildQuery(Schema).GetValues();
+
+		const int32 NumDimensions = Schema->SchemaCardinality;
+
+		// do we need to reconstruct pose values?
+		TArrayView<float> ReconstructedPoseValuesBuffer((float*)FMemory_Alloca(NumDimensions * sizeof(float)), NumDimensions);
+		check(IsAligned(ReconstructedPoseValuesBuffer.GetData(), alignof(VectorRegister4Float)));
+
+		bool bReconstructPoseValues = SearchIndex.Values.IsEmpty();
+		
+		for (int32 PoseIdx = 0; PoseIdx < SearchIndex.GetNumPoses(); ++PoseIdx)
+		{
+			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
+
+			dataInPoseValueArray array_poseValue;
+			dataInQueryArray array_query;
+
+			array_poseValue.databaseIndex = dataBaseIndex;
+			array_poseValue.poseIdx = PoseIdx;
+			array_query.databaseIndex = dataBaseIndex;
+			array_query.poseIdx = PoseIdx;
+			array_poseValue.poseValues = PoseValues;
+			array_query.queryValues = QueryValues;
+
+			computeShader_input.poseValueArray.Add(array_poseValue);
+			computeShader_input.queryArray.Add(array_query);
+		}
+	}
 }

@@ -335,13 +335,17 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 		}
 
 		bool bJumpToPose = false;
+		int index = 0;
 		for (TObjectPtr<const UPoseSearchDatabase> Database : Databases)
 		{
 			if (ensure(Database))
 			{
-				FSearchResult NewSearchResult = Database->Search(SearchContext);
+				index += 1;
+				dataInComputeShader inData;
+				FSearchResult NewSearchResult = Database->Search(SearchContext, inData, index);
 				FExampleComputeShaderInterface::check_connection();
-				/*if (NewSearchResult.PoseCost.GetTotalCost() < SearchResult.PoseCost.GetTotalCost())
+				/*
+				if (NewSearchResult.PoseCost.GetTotalCost() < SearchResult.PoseCost.GetTotalCost())
 				{
 					bJumpToPose = true;
 					SearchResult = NewSearchResult;
