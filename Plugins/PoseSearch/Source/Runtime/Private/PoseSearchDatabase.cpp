@@ -700,7 +700,8 @@ static inline void EvaluatePoseComputeShader(UE::PoseSearch::FSearchResult& Resu
 		inData->poseIdx = PoseIdx;
 		inData->database_query_data = PoseValues;
 		inData->trajectory_query_data = QueryValues;
-
+		inData->weightsSqrt = SearchIndex.WeightsSqrt;
+		inData->arrayLength = QueryValues.Num();
 		const FPoseSearchCost PoseCost;
 		//PoseCost = bAlignedAndPadded ? SearchIndex.CompareAlignedPoses(PoseIdx, 0.f, PoseValues, QueryValues) : SearchIndex.ComparePoses(PoseIdx, 0.f, PoseValues, QueryValues);
 		//PoseCost = RunComplieShader();

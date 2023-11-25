@@ -32,7 +32,8 @@ struct FPoseSearchQueryTrajectory;
 
 // Han Wang added ---------------
 struct dataInComputeShader {
-
+	float weightsSqrt;
+	int32 arrayLength;
 	TArray<dataInPoseValueArray> poseValueArray;
 	TArray<dataInQueryArray> queryArray;
 };
