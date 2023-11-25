@@ -27,9 +27,18 @@ struct FAnimationUpdateContext;
 struct FPoseSearchQueryTrajectory;
 
 // Han Wang added ---------------
-struct dataForComputeShader {
-	TArray<TArray<float>> current_query_data;
+struct dataInComputeShader {
+	int32 databaseIndex;
+	int32 poseIdx;
+	float weight;
+	TArray<float> database_query_data;
+	TArray<float> trajectory_query_data;
+};
 
+struct dataOutComputeShader {
+	int32 databaseIndex;
+	int32 poseIdx;
+	float cost;
 };
 
 USTRUCT(BlueprintType, Category="Animation|Pose Search")
@@ -113,7 +122,6 @@ class POSESEARCH_API UPoseSearchLibrary : public UBlueprintFunctionLibrary
 		float TrajectorySpeedMultiplier);
 private:
 	// Han Wang added ---------------
-	dataForComputeShader m_data;
 	FExampleComputeShaderInterface myInterface;
 
 public:

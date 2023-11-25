@@ -28,7 +28,7 @@ void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext
 {
 	//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), SchemaCardinality);
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_PoseSearch_BuildQuery);
-	TConstArrayView<float> curr_query;
+
 	check(InOutQuery.GetSchema() == this);
 	check(InOutQuery.GetValues().Num() == SchemaCardinality);
 	//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), SchemaCardinality);
@@ -46,8 +46,6 @@ void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext
 			//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), ChannelPtr->GetChannelDataOffset());
 		}
 		ChannelPtr->BuildQuery(SearchContext, InOutQuery);
-		curr_query = InOutQuery.GetValues();
-
 
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));

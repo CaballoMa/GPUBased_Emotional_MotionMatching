@@ -256,6 +256,9 @@ class POSESEARCH_API UPoseSearchDatabase : public UDataAsset
 {
 	GENERATED_BODY()
 public:
+	//Used for Compute shader
+	UPROPERTY(EditAnywhere, Category = "Preview")
+	int32 DataBaseIndex = 0;
 
 	// The Motion Database Config sets what channels this database will use to match against (bones, trajectory and what properties of those you’re interested in, such as position and velocity).
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Database", DisplayName="Config")
@@ -318,7 +321,6 @@ public:
 
 	void SetSearchIndex(const UE::PoseSearch::FSearchIndex& SearchIndex);
 	const UE::PoseSearch::FSearchIndex& GetSearchIndex() const;
-	
 	bool GetSkipSearchIfPossible() const;
 
 	int32 GetPoseIndexFromTime(float AssetTime, const UE::PoseSearch::FSearchIndexAsset& SearchIndexAsset) const;
