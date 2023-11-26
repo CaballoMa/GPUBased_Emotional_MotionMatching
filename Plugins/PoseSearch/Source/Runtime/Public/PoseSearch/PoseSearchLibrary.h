@@ -54,7 +54,7 @@ struct dataInQueryArray {
 struct dataOutComputeShader {
 	int32 databaseIndex;
 	int32 poseIdx;
-	float cost;
+	TArray<float> cost;
 };
 
 USTRUCT(BlueprintType, Category="Animation|Pose Search")

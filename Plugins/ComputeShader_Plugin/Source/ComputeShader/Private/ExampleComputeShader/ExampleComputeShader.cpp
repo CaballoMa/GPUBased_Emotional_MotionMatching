@@ -51,8 +51,11 @@ public:
 		// SHADER_PARAMETER_STRUCT_REF(FMyCustomStruct, MyCustomStruct)
 
 		
-		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<int>, Input)
-		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<int>, Output)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, A)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, B)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, WeightsSqrt)
+		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float>, PartialCosts)
+		
 		
 
 	END_SHADER_PARAMETER_STRUCT()
@@ -119,18 +122,28 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			FExampleComputeShader::FParameters* PassParameters = GraphBuilder.AllocParameters<FExampleComputeShader::FParameters>();
 
 			
-			const void* RawData = (void*)Params.Input;
-			int NumInputs = 2;
-			int InputSize = sizeof(int);
-			FRDGBufferRef InputBuffer = CreateUploadBuffer(GraphBuilder, TEXT("InputBuffer"), InputSize, NumInputs, RawData, InputSize * NumInputs);
+			const void* A = (void*)Params.A.GetData();
+			const void* B = (void*)Params.B.GetData();
+			const void* weightsSqrt = (void*)Params.weightsSqrt.GetData();
+			int NumInputs = Params.arrayLength;
+			int InputSize = sizeof(float);
+			FRDGBufferRef InputBufferA = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferA"), InputSize, NumInputs, A, InputSize * NumInputs);
 
-			PassParameters->Input = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBuffer, PF_R32_SINT));
+			PassParameters->A = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferA, PF_R32_FLOAT));
+
+			FRDGBufferRef InputBufferB = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferB"), InputSize, NumInputs, B, InputSize * NumInputs);
+
+			PassParameters->B = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferB, PF_R32_FLOAT));
+
+			FRDGBufferRef InputBufferWeightsSqrt = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferWeightsSqrt"), InputSize, NumInputs, weightsSqrt, InputSize * NumInputs);
+
+			PassParameters->WeightsSqrt = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferWeightsSqrt, PF_R32_FLOAT));
 
 			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
-				FRDGBufferDesc::CreateBufferDesc(sizeof(int32), 1),
+				FRDGBufferDesc::CreateBufferDesc(sizeof(float), NUM_THREADS_ExampleComputeShader_X),
 				TEXT("OutputBuffer"));
 
-			PassParameters->Output = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_SINT));
+			PassParameters->PartialCosts = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_FLOAT));
 			
 
 			auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
@@ -143,15 +156,14 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 				FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);
 			});
 
-			
 			FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("ExecuteExampleComputeShaderOutput"));
 			AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
 
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 					
-					int32* Buffer = (int32*)GPUBufferReadback->Lock(1);
-					int OutVal = Buffer[0];
+					float* Buffer = (float*)GPUBufferReadback->Lock(NUM_THREADS_ExampleComputeShader_X);
+					int OutVal = Buffer[0] + Buffer[1] + Buffer[2] + Buffer[3] + Buffer[4] + Buffer[5] + Buffer[6];
 					
 					GPUBufferReadback->Unlock();
 

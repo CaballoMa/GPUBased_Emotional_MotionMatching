@@ -25,6 +25,6 @@
 #include "RenderGraphResources.h"
 #include "Runtime/Engine/Classes/Engine/TextureRenderTarget2D.h"
 
-#define NUM_THREADS_ExampleComputeShader_X 1
-#define NUM_THREADS_ExampleComputeShader_Y 8
-#define NUM_THREADS_ExampleComputeShader_Z 8
+#define NUM_THREADS_ExampleComputeShader_X 7
+#define NUM_THREADS_ExampleComputeShader_Y 1
+#define NUM_THREADS_ExampleComputeShader_Z 1

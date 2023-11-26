@@ -698,8 +698,8 @@ static inline void EvaluatePoseComputeShader(UE::PoseSearch::FSearchResult& Resu
 		dataInComputeShader inData;
 		inData->databaseIndex = this->DataBaseIndex;
 		inData->poseIdx = PoseIdx;
-		inData->database_query_data = PoseValues;
-		inData->trajectory_query_data = QueryValues;
+		inData->poseValueArray = PoseValues;
+		inData->queryArray = QueryValues;
 		inData->weightsSqrt = SearchIndex.WeightsSqrt;
 		inData->arrayLength = QueryValues.Num();
 		const FPoseSearchCost PoseCost;
@@ -1047,8 +1047,6 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 #endif // UE_POSE_SEARCH_TRACE_ENABLED
 		);
 		check(Algo::IsSorted(NonSelectableIdx));
-
-		TConstArrayView<float> QueryValues = SearchContext.GetOrBuildQuery(Schema).GetValues();
 
 		const int32 NumDimensions = Schema->SchemaCardinality;
 

@@ -5,7 +5,7 @@ RWStructuredBuffer<float> B;
 RWStructuredBuffer<float> WeightsSqrt;
 RWStructuredBuffer<float> PartialCosts;
 
-[numthreads(7, 1, 1)]
+[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
 void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID)
 {
     int index = DTid.x * 4;

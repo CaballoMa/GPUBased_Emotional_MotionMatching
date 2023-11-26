@@ -336,6 +336,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 
 		bool bJumpToPose = false;
 		int index = 0;
+		dataInComputeShader inData;
 		for (TObjectPtr<const UPoseSearchDatabase> Database : Databases)
 		{
 			if (ensure(Database))
@@ -587,7 +588,9 @@ void UPoseSearchLibrary::MotionMatch(
 		FMemMark Mark(FMemStack::Get());
 		FSearchContext SearchContext(&TrajectoryRootSpace, ExtendedPoseHistory.IsInitialized() ? &ExtendedPoseHistory : nullptr, TimeToFutureAnimationStart);
 
-		FSearchResult SearchResult = Database->Search(SearchContext);
+		int index = 0;
+		dataInComputeShader inData;
+		FSearchResult SearchResult = Database->Search(SearchContext, inData, index);
 		if (SearchResult.IsValid())
 		{
 			const FSearchIndexAsset* SearchIndexAsset = SearchResult.GetSearchIndexAsset();

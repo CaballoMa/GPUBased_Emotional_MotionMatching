@@ -5,7 +5,7 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Materials/MaterialRenderProxy.h"
-
+#include "../../../../../PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h"
 #include "ExampleComputeShader.generated.h"
 
 #define TexWidth 512
@@ -19,10 +19,18 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 	int Z;
 
 	
-	int Input[2];
-	int Output;
-	
-	
+	TArray<float> weightsSqrt;
+	int32 arrayLength;
+	TArray<float> A;
+	TArray<float> B;
+	TArray<float> OutPut;
+	/*
+	struct dataOutComputeShader {
+		int32 databaseIndex;
+		int32 poseIdx;
+		TArray<float> cost;
+	};
+	*/
 
 	FExampleComputeShaderDispatchParams(int x, int y, int z)
 		: X(x)
