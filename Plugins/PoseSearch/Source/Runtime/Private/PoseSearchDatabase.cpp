@@ -658,6 +658,8 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 	if (PoseSearchMode == EPoseSearchMode::BruteForce || PoseSearchMode == EPoseSearchMode::PCAKDTree_Compare)
 	{
 		collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
+		
+
 		//Result = SearchBruteForce(SearchContext);
 	}
 	/*
@@ -1069,9 +1071,24 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			array_query.poseIdx = PoseIdx;
 			array_poseValue.poseValues = PoseValues;
 			array_query.queryValues = QueryValues;
-
+			TArray<float> weightsSqrt;
 			computeShader_input.poseValueArray.Add(array_poseValue);
 			computeShader_input.queryArray.Add(array_query);
+
+			TArray<float> new_queryValues;
+			new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
+
+
+			TArray<float> new_poseValues;
+			new_poseValues.Append(PoseValues.GetData(), PoseValues.Num());
+			
+			
+			UExampleComputeShaderLibrary_AsyncExecution newAsyncExecution;
+			//void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
+			//newAsyncExecution.SetComputeShaderData(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
+			newAsyncExecution.Activate(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
+
+
 		}
 	}
 }

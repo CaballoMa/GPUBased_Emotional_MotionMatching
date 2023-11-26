@@ -5,7 +5,7 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Materials/MaterialRenderProxy.h"
-#include "../../../../../PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h"
+//#include "../../../../../PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h"
 #include "ExampleComputeShader.generated.h"
 
 #define TexWidth 512
@@ -23,9 +23,10 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 	int32 arrayLength;
 	TArray<float> A;
 	TArray<float> B;
-	int32 dataBaseIdx;
-	int32 poseIdx;
 	TArray<float> OutPut;
+	int32 databaseIdx;
+	int32 poseIdx;
+
 	/*
 	struct dataOutComputeShader {
 		int32 databaseIndex;
@@ -49,13 +50,13 @@ public:
 	static void DispatchRenderThread(
 		FRHICommandListImmediate& RHICmdList,
 		FExampleComputeShaderDispatchParams Params,
-		TFunction<void(float OutputVal, int dbIdx, int psIdx)> AsyncCallback
+		TFunction<void(int OutputVal)> AsyncCallback
 	);
 
 	// Executes this shader on the render thread from the game thread via EnqueueRenderThreadCommand
 	static void DispatchGameThread(
 		FExampleComputeShaderDispatchParams Params,
-		TFunction<void(float OutputVal, int dbIdx, int psIdx)> AsyncCallback
+		TFunction<void(int OutputVal)> AsyncCallback
 	)
 	{
 		ENQUEUE_RENDER_COMMAND(SceneDrawCompletion)(
@@ -68,7 +69,7 @@ public:
 	// Dispatches this shader. Can be called from any thread
 	static void Dispatch(
 		FExampleComputeShaderDispatchParams Params,
-		TFunction<void(float OutputVal, int dbIdx, int psIdx)> AsyncCallback
+		TFunction<void(int OutputVal)> AsyncCallback
 	)
 	{
 		if (IsInRenderingThread()) {
@@ -93,26 +94,31 @@ class COMPUTESHADER_API UExampleComputeShaderLibrary_AsyncExecution : public UBl
 
 public:
 	
+	//¥À¥¶…Ë÷√xyz
 	void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
-	void start_computeShader();
-	FExampleComputeShaderDispatchParams Params;
+
+	
 
 	// Execute the actual load
-	virtual void Activate() override {
-		// Create a dispatch parameters struct and fill it the input array with our args
-		/*FExampleComputeShaderDispatchParams Params(1, 1, 1);
-		Params.Input[0] = Arg1;
-		Params.Input[1] = Arg2;*/
+	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length , int PoseIdx, int dataBaseIndex) {
+		FExampleComputeShaderDispatchParams Params(1,1,1);
 
-		// Dispatch the compute shader and wait until it completes
-		/*FExampleComputeShaderInterface::Dispatch(Params, [this](int OutputVal) {
+		Params.A = new_poseValues;
+		Params.B = new_queryValues;
+		Params.arrayLength = array_length;
+		Params.weightsSqrt = weightsSqrt;
+		Params.databaseIdx = dataBaseIndex;
+		Params.poseIdx = PoseIdx;
+
+		FExampleComputeShaderInterface::Dispatch(Params, [this](int OutputVal) {
 			this->Completed.Broadcast(OutputVal);
-		});*/
+			});
 	}
-	
-	
-	
-	/*UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", Category = "ComputeShader", WorldContext = "WorldContextObject"))
+
+
+
+	/*
+	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", Category = "ComputeShader", WorldContext = "WorldContextObject"))
 	static UExampleComputeShaderLibrary_AsyncExecution* ExecuteBaseComputeShader(UObject* WorldContextObject, int Arg1, int Arg2) {
 		UExampleComputeShaderLibrary_AsyncExecution* Action = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
 		Action->Arg1 = Arg1;
@@ -120,13 +126,14 @@ public:
 		Action->RegisterWithGameInstance(WorldContextObject);
 
 		return Action;
-	}*/
-
+	}
+	*/
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnExampleComputeShaderLibrary_AsyncExecutionCompleted Completed;
 
 	
-	/*int Arg1;
-	int Arg2;*/
+	//int Arg1;
+	//int Arg2;
 	
 };

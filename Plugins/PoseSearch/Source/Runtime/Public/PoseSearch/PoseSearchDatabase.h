@@ -8,7 +8,9 @@
 #include "PoseSearch/PoseSearchIndex.h"
 #include "PoseSearch/PoseSearchResult.h"
 #include "PoseSearchLibrary.h"
+#include "ExampleComputeShader/ExampleComputeShader.h"
 #include "PoseSearchDatabase.generated.h"
+
 
 
 struct FInstancedStruct;
