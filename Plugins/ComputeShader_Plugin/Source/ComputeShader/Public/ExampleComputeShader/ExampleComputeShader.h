@@ -5,7 +5,7 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Materials/MaterialRenderProxy.h"
-#include "../../../../../PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h"
+//#include "../../../../../PoseSearch/Source/Runtime/Public/PoseSearch/PoseSearchLibrary.h"
 #include "ExampleComputeShader.generated.h"
 
 #define TexWidth 512
@@ -90,22 +90,26 @@ class COMPUTESHADER_API UExampleComputeShaderLibrary_AsyncExecution : public UBl
 	GENERATED_BODY()
 
 public:
-	
+	//¥À¥¶…Ë÷√xyz
+	void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
+	void start_computeShader();
+	FExampleComputeShaderDispatchParams Params;
+
 	// Execute the actual load
 	virtual void Activate() override {
 		// Create a dispatch parameters struct and fill it the input array with our args
-		FExampleComputeShaderDispatchParams Params(1, 1, 1);
-		Params.Input[0] = Arg1;
-		Params.Input[1] = Arg2;
-
+		
+		//Params.Input[0] = Arg1;
+		//Params.Input[1] = Arg2;
 		// Dispatch the compute shader and wait until it completes
+		/*
 		FExampleComputeShaderInterface::Dispatch(Params, [this](int OutputVal) {
 			this->Completed.Broadcast(OutputVal);
-		});
+		})*/;
 	}
 	
 	
-	
+	/*
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", Category = "ComputeShader", WorldContext = "WorldContextObject"))
 	static UExampleComputeShaderLibrary_AsyncExecution* ExecuteBaseComputeShader(UObject* WorldContextObject, int Arg1, int Arg2) {
 		UExampleComputeShaderLibrary_AsyncExecution* Action = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
@@ -115,12 +119,12 @@ public:
 
 		return Action;
 	}
-
+	*/
 	UPROPERTY(BlueprintAssignable)
 	FOnExampleComputeShaderLibrary_AsyncExecutionCompleted Completed;
 
 	
-	int Arg1;
-	int Arg2;
+	//int Arg1;
+	//int Arg2;
 	
 };

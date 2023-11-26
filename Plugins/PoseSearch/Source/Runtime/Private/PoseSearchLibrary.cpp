@@ -353,6 +353,8 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 				}*/
 			}
 		}
+		//UExampleComputeShaderLibrary_AsyncExecution::SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
+		//UExampleComputeShaderLibrary_AsyncExecution::start_computeShader();
 
 		//1. Waiting for Compute Shader finishing the job
 		//2. For-loop each SearchResult to find a BestCost 

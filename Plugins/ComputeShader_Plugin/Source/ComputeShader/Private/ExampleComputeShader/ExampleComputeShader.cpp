@@ -200,3 +200,20 @@ void FExampleComputeShaderInterface::check_connection()
 {
 	UE_LOG(LogTemp, Warning, TEXT(" the connection established .. .. .."));
 }
+
+void UExampleComputeShaderLibrary_AsyncExecution::SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx)
+{
+	this->Params.arrayLength = arrayLength;
+	this->Params.weightsSqrt = weightsSqrt;
+	this->Params.A = poseValueArray;
+	this->Params.B = queryArray;
+
+}
+
+void UExampleComputeShaderLibrary_AsyncExecution::start_computeShader()
+{
+
+	FExampleComputeShaderInterface::Dispatch(Params, [this](int OutputVal) {
+		this->Completed.Broadcast(OutputVal);
+		});
+}
