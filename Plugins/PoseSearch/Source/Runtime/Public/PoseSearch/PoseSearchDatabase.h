@@ -7,8 +7,9 @@
 #include "PoseSearch/PoseSearchCost.h"
 #include "PoseSearch/PoseSearchIndex.h"
 #include "PoseSearch/PoseSearchResult.h"
-#include "PoseSearchDatabase.generated.h"
 #include "PoseSearchLibrary.h"
+#include "PoseSearchDatabase.generated.h"
+
 
 
 struct FInstancedStruct;

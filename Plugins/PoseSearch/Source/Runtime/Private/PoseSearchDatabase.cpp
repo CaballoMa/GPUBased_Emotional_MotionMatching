@@ -1048,8 +1048,6 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 		);
 		check(Algo::IsSorted(NonSelectableIdx));
 
-		TConstArrayView<float> QueryValues = SearchContext.GetOrBuildQuery(Schema).GetValues();
-
 		const int32 NumDimensions = Schema->SchemaCardinality;
 
 		// do we need to reconstruct pose values?
