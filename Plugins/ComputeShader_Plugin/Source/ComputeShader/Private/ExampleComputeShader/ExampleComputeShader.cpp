@@ -54,6 +54,8 @@ public:
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, A)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, B)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, WeightsSqrt)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(RWBuffer<int>, DatabaseIdx)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(RWBuffer<int>, PoseIdx)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float>, PartialCosts)
 		
 		
@@ -99,7 +101,7 @@ private:
 //                            ShaderType                            ShaderPath                     Shader function name    Type
 IMPLEMENT_GLOBAL_SHADER(FExampleComputeShader, "/ComputeShaderShaders/ExampleComputeShader/ExampleComputeShader.usf", "ExampleComputeShader", SF_Compute);
 
-void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, TFunction<void(int OutputVal)> AsyncCallback) {
+void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, TFunction<void(float OutputVal, int dbIdx, int psIdx)> AsyncCallback) {
 	FRDGBuilder GraphBuilder(RHICmdList);
 
 	{
@@ -125,6 +127,9 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			const void* A = (void*)Params.A.GetData();
 			const void* B = (void*)Params.B.GetData();
 			const void* weightsSqrt = (void*)Params.weightsSqrt.GetData();
+			const void* databaseIdx = (void*)Params.dataBaseIdx;
+			const void* poseIdx = (void*)Params.poseIdx;
+
 			int NumInputs = Params.arrayLength;
 			int InputSize = sizeof(float);
 			FRDGBufferRef InputBufferA = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferA"), InputSize, NumInputs, A, InputSize * NumInputs);
@@ -139,8 +144,17 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 			PassParameters->WeightsSqrt = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferWeightsSqrt, PF_R32_FLOAT));
 
+			FRDGBufferRef InputBufferDatabaseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferDatabaseIdx"), sizeof(int), 1, databaseIdx, sizeof(int));
+
+			PassParameters->DatabaseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferDatabaseIdx, PF_R32_UINT));
+
+			FRDGBufferRef InputBufferPoseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferPoseIdx"), sizeof(int), 1, poseIdx, sizeof(int));
+
+			PassParameters->PoseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferPoseIdx, PF_R32_UINT));
+
+
 			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
-				FRDGBufferDesc::CreateBufferDesc(sizeof(float), NUM_THREADS_ExampleComputeShader_X),
+				FRDGBufferDesc::CreateBufferDesc(sizeof(float), NUM_THREADS_ExampleComputeShader_X + 2),
 				TEXT("OutputBuffer"));
 
 			PassParameters->PartialCosts = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_FLOAT));
@@ -162,13 +176,14 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 					
-					float* Buffer = (float*)GPUBufferReadback->Lock(NUM_THREADS_ExampleComputeShader_X);
-					int OutVal = Buffer[0] + Buffer[1] + Buffer[2] + Buffer[3] + Buffer[4] + Buffer[5] + Buffer[6];
-					
+					float* Buffer = (float*)GPUBufferReadback->Lock(NUM_THREADS_ExampleComputeShader_X + 2);
+					float OutVal = Buffer[0] + Buffer[1] + Buffer[2] + Buffer[3] + Buffer[4] + Buffer[5] + Buffer[6];
+					int dbIdx = Buffer[7];
+					int psIdx = Buffer[8];
 					GPUBufferReadback->Unlock();
 
-					AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal]() {
-						AsyncCallback(OutVal);
+					AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal, dbIdx, psIdx]() {
+						AsyncCallback(OutVal, dbIdx, psIdx);
 					});
 
 					delete GPUBufferReadback;
@@ -201,19 +216,20 @@ void FExampleComputeShaderInterface::check_connection()
 	UE_LOG(LogTemp, Warning, TEXT(" the connection established .. .. .."));
 }
 
-void UExampleComputeShaderLibrary_AsyncExecution::SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx)
+void UExampleComputeShaderLibrary_AsyncExecution::SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int databaseIdx)
 {
 	this->Params.arrayLength = arrayLength;
 	this->Params.weightsSqrt = weightsSqrt;
 	this->Params.A = poseValueArray;
 	this->Params.B = queryArray;
-
+	this->Params.dataBaseIdx = databaseIdx;
+	this->Params.poseIdx = poseIdx;
 }
 
 void UExampleComputeShaderLibrary_AsyncExecution::start_computeShader()
 {
 
-	FExampleComputeShaderInterface::Dispatch(Params, [this](int OutputVal) {
+	FExampleComputeShaderInterface::Dispatch(Params, [this](float OutputVal, int dbIdx, int psIdx) {
 		this->Completed.Broadcast(OutputVal);
 		});
 }

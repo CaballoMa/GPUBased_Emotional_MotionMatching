@@ -11,7 +11,6 @@
 #include "PoseSearchDatabase.generated.h"
 
 
-
 struct FInstancedStruct;
 class UAnimationAsset;
 class UAnimComposite;

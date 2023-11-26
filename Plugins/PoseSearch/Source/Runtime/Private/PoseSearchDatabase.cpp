@@ -658,7 +658,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 	if (PoseSearchMode == EPoseSearchMode::BruteForce || PoseSearchMode == EPoseSearchMode::PCAKDTree_Compare)
 	{
 		collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
-		Result = SearchBruteForce(SearchContext);
+		//Result = SearchBruteForce(SearchContext);
 	}
 	/*
 	if (PoseSearchMode != EPoseSearchMode::BruteForce)

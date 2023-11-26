@@ -31,6 +31,13 @@ struct FAnimationUpdateContext;
 struct FPoseSearchQueryTrajectory;
 
 // Han Wang added ---------------
+struct dataInComputeShader {
+	TArray<float> weightsSqrt;
+	int32 arrayLength;
+	TArray<dataInPoseValueArray> poseValueArray;
+	TArray<dataInQueryArray> queryArray;
+};
+
 struct dataInPoseValueArray {
 	int32 databaseIndex;
 	int32 poseIdx;
@@ -42,15 +49,6 @@ struct dataInQueryArray {
 	int32 poseIdx;
 	TConstArrayView<float> queryValues;
 };
-
-struct dataInComputeShader {
-	TArray<float> weightsSqrt;
-	int32 arrayLength;
-	TArray<dataInPoseValueArray> poseValueArray;
-	TArray<dataInQueryArray> queryArray;
-};
-
-
 
 
 struct dataOutComputeShader {
