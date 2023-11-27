@@ -353,8 +353,6 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 				}*/
 			}
 		}
-		//UExampleComputeShaderLibrary_AsyncExecution::SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
-		//UExampleComputeShaderLibrary_AsyncExecution::start_computeShader();
 
 		//1. Waiting for Compute Shader finishing the job
 		//2. For-loop each SearchResult to find a BestCost 
@@ -585,12 +583,13 @@ void UPoseSearchLibrary::MotionMatch(
 			}
 #endif // ENABLE_DRAW_DEBUG && ENABLE_ANIM_DEBUG
 		}
-		//han wang ----- need to update here!!!!
+
 		FMemMark Mark(FMemStack::Get());
 		FSearchContext SearchContext(&TrajectoryRootSpace, ExtendedPoseHistory.IsInitialized() ? &ExtendedPoseHistory : nullptr, TimeToFutureAnimationStart);
+
 		int index = 0;
 		dataInComputeShader inData;
-		FSearchResult SearchResult = Database->Search(SearchContext, inData,index);
+		FSearchResult SearchResult = Database->Search(SearchContext, inData, index);
 		if (SearchResult.IsValid())
 		{
 			const FSearchIndexAsset* SearchIndexAsset = SearchResult.GetSearchIndexAsset();

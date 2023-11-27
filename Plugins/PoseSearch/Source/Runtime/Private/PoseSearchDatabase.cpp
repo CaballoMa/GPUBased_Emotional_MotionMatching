@@ -657,9 +657,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 
 	if (PoseSearchMode == EPoseSearchMode::BruteForce || PoseSearchMode == EPoseSearchMode::PCAKDTree_Compare)
 	{
-		collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
-		
-
+		Result = collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
 		//Result = SearchBruteForce(SearchContext);
 	}
 	/*
@@ -681,37 +679,6 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 	}
 	*/
 	return Result;
-}
-
-template<bool bReconstructPoseValues, bool bAlignedAndPadded>
-static inline void EvaluatePoseComputeShader(UE::PoseSearch::FSearchResult& Result, const UE::PoseSearch::FSearchIndex& SearchIndex, TConstArrayView<float> QueryValues, TArrayView<float> ReconstructedPoseValuesBuffer,
-	int32 PoseIdx, const UE::PoseSearch::FSearchFilters& SearchFilters, UE::PoseSearch::FSearchContext& SearchContext, const UPoseSearchDatabase* Database, bool bUpdateBestCandidates, size_t ResultIndex)
-{
-	using namespace UE::PoseSearch;
-
-	const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
-
-	if (SearchFilters.AreFiltersValid(SearchIndex, PoseValues, QueryValues, PoseIdx, SearchIndex.PoseMetadata[PoseIdx]
-#if UE_POSE_SEARCH_TRACE_ENABLED
-		, SearchContext, Database
-#endif
-	))
-	{
-		dataInComputeShader inData;
-		inData->databaseIndex = this->DataBaseIndex;
-		inData->poseIdx = PoseIdx;
-		inData->poseValueArray = PoseValues;
-		inData->queryArray = QueryValues;
-		inData->weightsSqrt = SearchIndex.WeightsSqrt;
-		inData->arrayLength = QueryValues.Num();
-		const FPoseSearchCost PoseCost;
-		//PoseCost = bAlignedAndPadded ? SearchIndex.CompareAlignedPoses(PoseIdx, 0.f, PoseValues, QueryValues) : SearchIndex.ComparePoses(PoseIdx, 0.f, PoseValues, QueryValues);
-		//PoseCost = RunComplieShader();
-		dataOutComputeShader outData;
-		outData->databaseIndex = this->DataBaseIndex;
-		outData->poseIdx = PoseIdx;
-		outData->cost = PoseCost.GetTotalCost();
-	}
 }
 
 template<bool bReconstructPoseValues, bool bAlignedAndPadded>
@@ -1028,14 +995,14 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::SearchBruteForce(UE::PoseSear
 	return Result;
 }
 
-void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& computeShader_input, int dataBaseIndex) const
+UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& computeShader_input, int dataBaseIndex) const
 {
 	SCOPE_CYCLE_COUNTER(STAT_PoseSearch_BruteForce);
 
 	using namespace UE::PoseSearch;
 
 	const FSearchIndex& SearchIndex = GetSearchIndex();
-
+	FSearchResult result;
 	// since any PoseCost calculated here is at least SearchIndex.MinCostAddend,
 	// there's no point in performing the search if CurrentBestTotalCost is already better than that
 	if (!GetSkipSearchIfPossible() || SearchContext.GetCurrentBestTotalCost() > SearchIndex.MinCostAddend)
@@ -1072,6 +1039,10 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			array_poseValue.poseValues = PoseValues;
 			array_query.queryValues = QueryValues;
 			TArray<float> weightsSqrt;
+			for (int i = 0; i < SearchIndex.WeightsSqrt.Num(); i++)
+			{
+				weightsSqrt[i] = SearchIndex.WeightsSqrt[i];
+			}
 			computeShader_input.poseValueArray.Add(array_poseValue);
 			computeShader_input.queryArray.Add(array_query);
 
@@ -1081,14 +1052,20 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 
 			TArray<float> new_poseValues;
 			new_poseValues.Append(PoseValues.GetData(), PoseValues.Num());
-			
-			
-			UExampleComputeShaderLibrary_AsyncExecution newAsyncExecution;
-			//void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int poseIdx, int DataBaseIdx);
-			//newAsyncExecution.SetComputeShaderData(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
-			newAsyncExecution.Activate(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
 
 
+			UExampleComputeShaderLibrary_AsyncExecution *newAsyncExecution = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
+			newAsyncExecution->Activate(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
+			computeShaderOutput buffer = newAsyncExecution->GetOutputFromGPUBuffer();
+			const float NotifyAddend = SearchIndex.PoseMetadata[PoseIdx].GetCostAddend();
+			if (buffer.costVal < result.PoseCost.GetTotalCost()- NotifyAddend)
+			{
+				result.PoseCost = FPoseSearchCost(buffer.costVal, NotifyAddend, 0.0);
+				result.PoseIdx = PoseIdx;
+			}
+			
 		}
+
+		return result;
 	}
 }

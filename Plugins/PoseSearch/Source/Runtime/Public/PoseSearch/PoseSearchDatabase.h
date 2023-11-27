@@ -12,7 +12,6 @@
 #include "PoseSearchDatabase.generated.h"
 
 
-
 struct FInstancedStruct;
 class UAnimationAsset;
 class UAnimComposite;
@@ -370,6 +369,5 @@ private:
 	UE::PoseSearch::FSearchResult SearchPCAKDTree(UE::PoseSearch::FSearchContext& SearchContext) const;
 	UE::PoseSearch::FSearchResult SearchBruteForce(UE::PoseSearch::FSearchContext& SearchContext) const;
 
-	//Han Wang Added
-	void collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
+	UE::PoseSearch::FSearchResult collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
 };
