@@ -364,12 +364,10 @@ public:
 	void UnregisterOnDerivedDataRebuild(void* Unregister);
 	void NotifyDerivedDataRebuild() const;
 #endif // WITH_EDITOR
-	UE::PoseSearch::FSearchResult CalculateGPUBufferResult(computeShaderOutput buffer, int PoseIdx) const;
 
 private:
 	UE::PoseSearch::FSearchResult SearchPCAKDTree(UE::PoseSearch::FSearchContext& SearchContext) const;
 	UE::PoseSearch::FSearchResult SearchBruteForce(UE::PoseSearch::FSearchContext& SearchContext) const;
 
 	UE::PoseSearch::FSearchResult collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
-	
 };
