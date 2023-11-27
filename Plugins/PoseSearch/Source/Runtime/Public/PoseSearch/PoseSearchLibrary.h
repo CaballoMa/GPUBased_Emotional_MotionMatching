@@ -30,25 +30,15 @@ namespace UE::PoseSearch
 struct FAnimationUpdateContext;
 struct FPoseSearchQueryTrajectory;
 
-// Han Wang added ---------------
-struct dataInComputeShader {
-	TArray<float> weightsSqrt;
-	int32 arrayLength;
-	TArray<dataInPoseValueArray> poseValueArray;
-	TArray<dataInQueryArray> queryArray;
-};
-
 struct dataInPoseValueArray {
 	int32 databaseIndex;
 	int32 poseIdx;
 	TConstArrayView<float> poseValues;
 };
 
-struct computeShaderOutput {
-	int32 databaseIndex;
-	int32 poseIdx;
-	float costVal;
-};
+
+// Han Wang added ---------------
+
 
 struct dataInQueryArray {
 	int32 databaseIndex;
@@ -62,6 +52,17 @@ struct dataOutComputeShader {
 	int32 poseIdx;
 	TArray<float> cost;
 };
+
+struct dataInComputeShader {
+	TArray<float> weightsSqrt;
+	int32 arrayLength;
+	TArray<dataInPoseValueArray> poseValueArray;
+	TArray<dataInQueryArray> queryArray;
+};
+
+
+
+
 
 USTRUCT(BlueprintType, Category="Animation|Pose Search")
 struct POSESEARCH_API FMotionMatchingState
