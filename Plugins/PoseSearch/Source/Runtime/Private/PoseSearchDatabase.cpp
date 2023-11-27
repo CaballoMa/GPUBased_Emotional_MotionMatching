@@ -1024,7 +1024,9 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 		check(IsAligned(ReconstructedPoseValuesBuffer.GetData(), alignof(VectorRegister4Float)));
 
 		bool bReconstructPoseValues = SearchIndex.Values.IsEmpty();
-		
+		UExampleComputeShaderLibrary_AsyncExecution* newAsyncExecution = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
+		float bestCost = FLT_MAX;
+		int bestIdx = -1;
 		for (int32 PoseIdx = 0; PoseIdx < SearchIndex.GetNumPoses(); ++PoseIdx)
 		{
 			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
@@ -1052,20 +1054,25 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 
 			TArray<float> new_poseValues;
 			new_poseValues.Append(PoseValues.GetData(), PoseValues.Num());
+			FExampleComputeShaderDispatchParams Params(1, 1, 1);
 
+			Params.A = new_poseValues;
+			Params.B = new_queryValues;
+			Params.weightsSqrt = weightsSqrt;
+			Params.dataBaseIdx = &dataBaseIndex;
+			Params.poseIdx = &PoseIdx;
 
-			UExampleComputeShaderLibrary_AsyncExecution *newAsyncExecution = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
-			newAsyncExecution->Activate(weightsSqrt, new_poseValues, new_queryValues, new_queryValues.Num(), PoseIdx, dataBaseIndex);
-			computeShaderOutput buffer = newAsyncExecution->GetOutputFromGPUBuffer();
-			const float NotifyAddend = SearchIndex.PoseMetadata[PoseIdx].GetCostAddend();
-			if (buffer.costVal < result.PoseCost.GetTotalCost()- NotifyAddend)
+			TArray<float> outputBuffer = newAsyncExecution->Execute(Params);
+			float currCost = outputBuffer[0] + outputBuffer[1] + outputBuffer[2] + outputBuffer[3] + outputBuffer[4] + outputBuffer[5] + outputBuffer[6];
+			if (bestCost > currCost)
 			{
-				result.PoseCost = FPoseSearchCost(buffer.costVal, NotifyAddend, 0.0);
-				result.PoseIdx = PoseIdx;
+				bestIdx = outputBuffer[8];
+				bestCost = currCost;
 			}
-			
 		}
-
+		const float NotifyAddend = SearchIndex.PoseMetadata[bestIdx].GetCostAddend();
+		result.PoseCost = FPoseSearchCost(bestCost, NotifyAddend, 0.0);
+		result.PoseIdx = bestIdx;
 		return result;
 	}
 }
