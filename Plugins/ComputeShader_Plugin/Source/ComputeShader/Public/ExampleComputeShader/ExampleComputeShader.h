@@ -93,8 +93,8 @@ class COMPUTESHADER_API UExampleComputeShaderLibrary_AsyncExecution : public UBl
 public:
 	
 	void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int* poseIdx, int* DataBaseIdx);
-	void start_computeShader();
-	FExampleComputeShaderDispatchParams Params;
+	//void start_computeShader();
+	//FExampleComputeShaderDispatchParams Params;
 	// Execute the actual load
 	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, int* PoseIdx, int* dataBaseIndex) {
 		FExampleComputeShaderDispatchParams Params(1, 1, 1);

@@ -1073,6 +1073,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 		const float NotifyAddend = SearchIndex.PoseMetadata[bestIdx].GetCostAddend();
 		result.PoseCost = FPoseSearchCost(bestCost, NotifyAddend, 0.0);
 		result.PoseIdx = bestIdx;
-		return result;
+		
 	}
+	return result;
 }

@@ -31,13 +31,6 @@ struct FAnimationUpdateContext;
 struct FPoseSearchQueryTrajectory;
 
 // Han Wang added ---------------
-struct dataInComputeShader {
-	TArray<float> weightsSqrt;
-	int32 arrayLength;
-	TArray<dataInPoseValueArray> poseValueArray;
-	TArray<dataInQueryArray> queryArray;
-};
-
 struct dataInPoseValueArray {
 	int32 databaseIndex;
 	int32 poseIdx;
@@ -62,6 +55,15 @@ struct dataOutComputeShader {
 	int32 poseIdx;
 	TArray<float> cost;
 };
+
+struct dataInComputeShader {
+	TArray<float> weightsSqrt;
+	int32 arrayLength;
+	TArray<dataInPoseValueArray> poseValueArray;
+	TArray<dataInQueryArray> queryArray;
+};
+
+
 
 USTRUCT(BlueprintType, Category="Animation|Pose Search")
 struct POSESEARCH_API FMotionMatchingState
