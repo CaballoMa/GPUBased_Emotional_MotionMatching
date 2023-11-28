@@ -54,8 +54,8 @@ public:
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, A)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, B)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, WeightsSqrt)
-		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<int>, DatabaseIdx)
-		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<int>, PoseIdx)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, DatabaseIdx)
+		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, PoseIdx)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float>, PartialCosts)
 		
 		
@@ -133,25 +133,25 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			int NumInputs = Params.arrayLength;
 			int InputSize = sizeof(float);
 
-			FRDGBufferRef InputBufferA = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferA"), InputSize, NumInputs, A, InputSize * NumInputs);
+			FRDGBufferRef InputBufferA = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferA"), InputSize, NumInputs, A, InputSize * Params.A.Num());
 
 			PassParameters->A = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferA, PF_R32_FLOAT));
 
-			FRDGBufferRef InputBufferB = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferB"), InputSize, NumInputs, B, InputSize * NumInputs);
+			FRDGBufferRef InputBufferB = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferB"), InputSize, NumInputs, B, InputSize * Params.B.Num());
 
 			PassParameters->B = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferB, PF_R32_FLOAT));
 
-			FRDGBufferRef InputBufferWeightsSqrt = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferWeightsSqrt"), InputSize, NumInputs, weightsSqrt, InputSize * NumInputs);
+			FRDGBufferRef InputBufferWeightsSqrt = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferWeightsSqrt"), InputSize, NumInputs, weightsSqrt, InputSize * Params.weightsSqrt.Num());
 
 			PassParameters->WeightsSqrt = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferWeightsSqrt, PF_R32_FLOAT));
 
-			FRDGBufferRef InputBufferDatabaseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferDatabaseIdx"), sizeof(int), 1, databaseIdx, sizeof(int));
+			FRDGBufferRef InputBufferDatabaseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferDatabaseIdx"), sizeof(float), 1, databaseIdx, sizeof(float));
 
-			PassParameters->DatabaseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferDatabaseIdx, PF_R32_UINT));
+			PassParameters->DatabaseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferDatabaseIdx, PF_R32_FLOAT));
 
-			FRDGBufferRef InputBufferPoseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferPoseIdx"), sizeof(int), 1, poseIdx, sizeof(int));
+			FRDGBufferRef InputBufferPoseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferPoseIdx"), sizeof(float), 1, poseIdx, sizeof(float));
 
-			PassParameters->PoseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferPoseIdx, PF_R32_UINT));
+			PassParameters->PoseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferPoseIdx, PF_R32_FLOAT));
 
 
 			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
@@ -176,7 +176,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 					
-					float* Buffer = (float*)GPUBufferReadback->Lock(9);
+					float* Buffer = (float*)GPUBufferReadback->Lock(9 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
 

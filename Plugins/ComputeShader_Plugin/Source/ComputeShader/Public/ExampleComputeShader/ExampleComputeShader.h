@@ -22,8 +22,8 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 	int32 arrayLength;
 	TArray<float> A;
 	TArray<float> B;
-	int32* dataBaseIdx;
-	int32* poseIdx;
+	float* dataBaseIdx;
+	float* poseIdx;
 	TArray<float> OutPut;
 	/*
 	struct dataOutComputeShader {
@@ -96,7 +96,7 @@ public:
 	//void start_computeShader();
 	//FExampleComputeShaderDispatchParams Params;
 	// Execute the actual load
-	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, int* PoseIdx, int* dataBaseIndex) {
+	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, float* PoseIdx, float* dataBaseIndex) {
 		FExampleComputeShaderDispatchParams Params(1, 1, 1);
 
 		Params.A = new_poseValues;
@@ -107,17 +107,15 @@ public:
 		Params.poseIdx = PoseIdx;
 	}
 	
-	TArray<float> Execute(FExampleComputeShaderDispatchParams Params)
+	void Execute(FExampleComputeShaderDispatchParams Params, TArray<float>& Output)
 	{
-		TArray<float> Output;
+		;
 		FExampleComputeShaderInterface::Dispatch(Params, [this, &Output, Params](float* OutputVal)
 			{
-				for (int i = 0; i < 9; i++)
-				{
-					Output.Add(OutputVal[i]);
-				}
+				Output.Add(OutputVal[0] + OutputVal[1] + OutputVal[2] + OutputVal[3] + OutputVal[4] + OutputVal[5] + OutputVal[6]);
+				Output.Add(OutputVal[7]);
+				Output.Add(OutputVal[8]);
 			});
-		return Output;
 	}
 
 	/*UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true", Category = "ComputeShader", WorldContext = "WorldContextObject"))

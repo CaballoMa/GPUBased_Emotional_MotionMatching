@@ -3,11 +3,11 @@
 Buffer<float> A;
 Buffer<float> B;
 Buffer<float> WeightsSqrt;
-Buffer<int> DatabaseIdx;
-Buffer<int> PoseIdx;
+Buffer<float> DatabaseIdx;
+Buffer<float> PoseIdx;
 RWBuffer<float> PartialCosts;
 
-[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
+[numthreads(7, 1, 1)]
 void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {
@@ -25,7 +25,10 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
 
         //PartialCosts[DTid.x] = dot(PartialCost, float4(1, 1, 1, 1));
         PartialCosts[DTid.x] = PartialCost;
-        PartialCosts[7] = DatabaseIdx;
-        PartialCosts[8] = PoseIdx;
+        if (DTid.x == 6)
+        {
+            PartialCosts[7] = DatabaseIdx[0];
+            PartialCosts[8] = PoseIdx[0];
+        }
     }
 }
