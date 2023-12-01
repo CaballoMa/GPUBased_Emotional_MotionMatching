@@ -12,8 +12,8 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {
     int index = DTid.x * 4;
-    int longIndex = DTid.y*DTid.z* 28 +  DTid.x * 4;
-    int currNum = (DTid.y)*9;
+    int longIndex = DTid.y * DTid.z * 28 + DTid.x * 4;
+    int currNum = (DTid.y) * 9;
 
     if (index + 3 < 28)
     {
@@ -25,12 +25,12 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
         float4 WeightedDiff = Diff * VW;
         float4 PartialCost = dot(WeightedDiff, WeightedDiff);
 
-        PartialCosts[DTid.x+currNum] = dot(PartialCost, float4(1, 1, 1, 1));
+        PartialCosts[DTid.x + currNum] = dot(PartialCost, float4(1, 1, 1, 1));
         //PartialCosts[DTid.x+currNum] = PartialCost;
         if (DTid.x == 6)
         {
-            PartialCosts[7+currNum] = DatabaseIdx[currNum];
-            PartialCosts[8+currNum] = PoseIdx[currNum];
+            PartialCosts[7 + currNum] = DatabaseIdx[currNum];
+            PartialCosts[8 + currNum] = PoseIdx[currNum];
         }
     }
 }

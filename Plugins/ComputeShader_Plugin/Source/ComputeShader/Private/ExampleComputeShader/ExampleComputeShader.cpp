@@ -99,9 +99,9 @@ private:
 
 // This will tell the engine to create the shader and where the shader entry point is.
 //                            ShaderType                            ShaderPath                     Shader function name    Type
-IMPLEMENT_GLOBAL_SHADER(FExampleComputeShader , "/ComputeShaderShaders/ExampleComputeShader/ExampleComputeShader.usf", "ExampleComputeShader", SF_Compute);
+IMPLEMENT_GLOBAL_SHADER(FExampleComputeShader, "/ComputeShaderShaders/ExampleComputeShader/ExampleComputeShader.usf", "ExampleComputeShader", SF_Compute);
 
-void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, TFunction<void(float* OutputVal)> AsyncCallback) {
+void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, TFunction<void(float* OutputVal)> AsyncCallback) {
 	FRDGBuilder GraphBuilder(RHICmdList);
 
 	{
@@ -109,21 +109,21 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 		DECLARE_GPU_STAT(ExampleComputeShader)
 		RDG_EVENT_SCOPE(GraphBuilder, "ExampleComputeShader");
 		RDG_GPU_STAT_SCOPE(GraphBuilder, ExampleComputeShader);
-		
+
 		typename FExampleComputeShader::FPermutationDomain PermutationVector;
-		
+
 		// Add any static permutation options here
 		// PermutationVector.Set<FExampleComputeShader::FMyPermutationName>(12345);
 
 		TShaderMapRef<FExampleComputeShader> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
-		
+
 
 		bool bIsShaderValid = ComputeShader.IsValid();
 
 		if (bIsShaderValid) {
 			FExampleComputeShader::FParameters* PassParameters = GraphBuilder.AllocParameters<FExampleComputeShader::FParameters>();
 
-			
+
 			const void* A = (void*)Params.A.GetData();
 			const void* B = (void*)Params.B.GetData();
 			const void* weightsSqrt = (void*)Params.weightsSqrt.GetData();
@@ -147,7 +147,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 			PassParameters->WeightsSqrt = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferWeightsSqrt, PF_R32_FLOAT));
 
-			FRDGBufferRef InputBufferDatabaseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferDatabaseIdx"), InputSize, NumIdentifyInputs, databaseIdx, InputSize* Params.dataBaseIdx.Num());
+			FRDGBufferRef InputBufferDatabaseIdx = CreateUploadBuffer(GraphBuilder, TEXT("InputBufferDatabaseIdx"), InputSize, NumIdentifyInputs, databaseIdx, InputSize * Params.dataBaseIdx.Num());
 
 			PassParameters->DatabaseIdx = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBufferDatabaseIdx, PF_R32_FLOAT));
 
@@ -157,7 +157,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 
 			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
-				FRDGBufferDesc::CreateBufferDesc(sizeof(float), 9* NumIdentifyInputs),
+				FRDGBufferDesc::CreateBufferDesc(sizeof(float), 9 * NumIdentifyInputs),
 				TEXT("OutputBuffer"));
 
 			PassParameters->PartialCosts = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_FLOAT));
@@ -168,47 +168,51 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 				PassParameters,
 				ERDGPassFlags::AsyncCompute,
 				[&PassParameters, ComputeShader, GroupCount](FRHIComputeCommandList& RHICmdList)
-			{
-				FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);
-			});
+				{
+					FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);
+				});
 
 			FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("ExecuteExampleComputeShaderOutput"));
 			AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
 
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
-					
+
 					float* Buffer = (float*)GPUBufferReadback->Lock(9 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
 
 					AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal]() {
 						AsyncCallback(OutVal);
-					});
+						});
 
 					delete GPUBufferReadback;
-				} else {
+				}
+				else {
 					AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
 						RunnerFunc(RunnerFunc);
-					});
+						});
 				}
-			};
+				};
 
 			AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
 				RunnerFunc(RunnerFunc);
-			});
-			
-		} else {
-			#if WITH_EDITOR
-				GEngine->AddOnScreenDebugMessage((uint64)42145125184, 6.f, FColor::Red, FString(TEXT("The compute shader has a problem.")));
-			#endif
+				});
+
+		}
+		else {
+#if WITH_EDITOR
+			GEngine->AddOnScreenDebugMessage((uint64)42145125184, 6.f, FColor::Red, FString(TEXT("The compute shader has a problem.")));
+#endif
 
 			// We exit here as we don't want to crash the game if the shader is not found or has an error.
-			
+
 		}
 	}
 
 	GraphBuilder.Execute();
+	//RenderFence.BeginFence();
+	
 }
 
 void FExampleComputeShaderInterface::check_connection()

@@ -358,8 +358,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 		//1. Waiting for Compute Shader finishing the job
 		//2. For-loop each SearchResult to find a BestCost 
 		//3. 
-		/*
-		#if UE_POSE_SEARCH_TRACE_ENABLED
+		/* #if UE_POSE_SEARCH_TRACE_ENABLED
 		SearchContext.BestCandidates.Add(PoseCost, PoseIdx, Database, EPoseCandidateFlags::Valid_Pose);
 		#endif*/
 
