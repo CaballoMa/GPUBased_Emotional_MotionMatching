@@ -5,11 +5,11 @@
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Materials/MaterialRenderProxy.h"
-#include "RHIGPUReadback.h"
 #include "ExampleComputeShader.generated.h"
 
 #define TexWidth 512
 #define TexHeight 512
+
 
 struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 {
@@ -44,45 +44,45 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 // This is a public interface that we define so outside code can invoke our compute shader.
 class COMPUTESHADER_API FExampleComputeShaderInterface {
 public:
-	static TArray<FRHIGPUBufferReadback*> BufferReadbackPool;
 	// Executes this shader on the render thread
 	static void DispatchRenderThread(
 		FRHICommandListImmediate& RHICmdList,
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	);
 
 	// Executes this shader on the render thread from the game thread via EnqueueRenderThreadCommand
 	static void DispatchGameThread(
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	)
 	{
 		ENQUEUE_RENDER_COMMAND(SceneDrawCompletion)(
-		[Params, RenderFence,AsyncCallback](FRHICommandListImmediate& RHICmdList)
+		[Params, AsyncCallback](FRHICommandListImmediate& RHICmdList)
 		{
-			DispatchRenderThread(RHICmdList, Params, RenderFence,AsyncCallback);
+			DispatchRenderThread(RHICmdList, Params, AsyncCallback);
 		});
 	}
 
 	// Dispatches this shader. Can be called from any thread
 	static void Dispatch(
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	)
 	{
 		if (IsInRenderingThread()) {
-			DispatchRenderThread(GetImmediateCommandList_ForRenderCommand(), Params, RenderFence,AsyncCallback);
+			DispatchRenderThread(GetImmediateCommandList_ForRenderCommand(), Params, AsyncCallback);
 		}else{
-			DispatchGameThread(Params,RenderFence,AsyncCallback);
+			DispatchGameThread(Params, AsyncCallback);
 		}
 	}
 
 	static void check_connection();
 };
+
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExampleComputeShaderLibrary_AsyncExecutionCompleted, const int, Value);
 
 
 UCLASS() // Change the _API to match your project
@@ -91,53 +91,38 @@ class COMPUTESHADER_API UExampleComputeShaderLibrary_AsyncExecution : public UBl
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMyCustomEventDelegate, float, Cost, float, DatabaseIdx, float, PoseIdx);
-	FMyCustomEventDelegate OnBroadcast;
-	bool bIsBoundToSender = false;
-	int32 currFrame;
-	TArray<TArray<float>>* outputFromDatabase = nullptr;
-
+	int overallSize = 9000;
+	TArray<float> computeShaderResult;
+	//void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int* poseIdx, int* DataBaseIdx);
+	//void start_computeShader();
+	//FExampleComputeShaderDispatchParams Params;
 	// Execute the actual load
+	/*
 	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, float* PoseIdx, float* dataBaseIndex) {
-		/*FExampleComputeShaderDispatchParams Params(1, 1, 1);
+		FExampleComputeShaderDispatchParams Params(1, 1, 1);
 
 		Params.A = new_poseValues;
 		Params.B = new_queryValues;
 		Params.arrayLength = array_length;
 		Params.weightsSqrt = weightsSqrt;
 		Params.dataBaseIdx = dataBaseIndex;
-		Params.poseIdx = PoseIdx;*/
-	}
+		Params.poseIdx = PoseIdx;
+	}*/
 	
-	void Execute(FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, FCriticalSection* CriticalSection, TArray<TArray<float>>* outputBuffer)
+	void Execute(FExampleComputeShaderDispatchParams Params, TArray<float>& Output)
 	{
-		if (outputFromDatabase == nullptr)
-		{
-			outputFromDatabase = outputBuffer;
-		}
-
-		FExampleComputeShaderInterface::Dispatch(Params, RenderFence, [this, Params, CriticalSection](float* OutputVal)
+		
+		FExampleComputeShaderInterface::Dispatch(Params, [this, &Output, Params](float* OutputVal)
 			{
-				if (outputFromDatabase != nullptr)
-				{
-					float cost = OutputVal[0] + OutputVal[1] + OutputVal[2] + OutputVal[3] + OutputVal[4] + OutputVal[5] + OutputVal[6];
-					float bestcost = FLT_MAX;
-					CriticalSection->Lock();
-					outputFromDatabase->Empty();
-					bestcost = cost;
-					outputFromDatabase->Add({ cost, OutputVal[7], OutputVal[8] });
-					for (int i = 1; i < 100000; i += 9) {
-						float poseIdx = OutputVal[i + 8];
-						cost = OutputVal[i] + OutputVal[i + 1] + OutputVal[i + 2] + OutputVal[i + 3] + OutputVal[i + 4] + OutputVal[i + 5] + OutputVal[i + 6];
-						if (bestcost > cost)
-						{
-							bestcost = cost;
-							outputFromDatabase->RemoveAt(0);
-							outputFromDatabase->Add({ cost, OutputVal[i + 7], poseIdx });
-						}
-					}
-					CriticalSection->Unlock();
+				for (int i = 0; i < 100000; i += 9) {
+					computeShaderResult.Add(OutputVal[i] + OutputVal[i+1] + OutputVal[i+2] + OutputVal[i + 3] + OutputVal[i + 4] + OutputVal[i + 5] + OutputVal[i + 6]);
+					//UE_LOG(LogTemp, Warning, TEXT("data base idx : %f"), OutputVal[i + 7]);
+					//UE_LOG(LogTemp, Warning, TEXT("pose idx : %f"), OutputVal[i + 8]);
+				
 				}
+				
+				//computeShaderResult.Add(OutputVal[7]);
+				//computeShaderResult.Add(OutputVal[8]);
 			});
 	}
 
@@ -150,6 +135,9 @@ public:
 
 		return Action;
 	}*/
+
+	UPROPERTY(BlueprintAssignable)
+	FOnExampleComputeShaderLibrary_AsyncExecutionCompleted Completed;
 	
 	/*int Arg1;
 	int Arg2;*/
