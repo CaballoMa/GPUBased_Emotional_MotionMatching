@@ -19,11 +19,11 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 
 	
 	TArray<float> weightsSqrt;
-	int32 arrayLength;
+	TArray<int32> arrayLength;
 	TArray<float> A;
 	TArray<float> B;
-	float* dataBaseIdx;
-	float* poseIdx;
+	TArray<float> dataBaseIdx;
+	TArray<float> poseIdx;
 	TArray<float> OutPut;
 	/*
 	struct dataOutComputeShader {
@@ -91,11 +91,13 @@ class COMPUTESHADER_API UExampleComputeShaderLibrary_AsyncExecution : public UBl
 	GENERATED_BODY()
 
 public:
-	
-	void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int* poseIdx, int* DataBaseIdx);
+	int overallSize = 9000;
+	TArray<float> computeShaderResult;
+	//void SetComputeShaderData(TArray<float> weightsSqrt, TArray<float> poseValueArray, TArray<float> queryArray, int arrayLength, int* poseIdx, int* DataBaseIdx);
 	//void start_computeShader();
 	//FExampleComputeShaderDispatchParams Params;
 	// Execute the actual load
+	/*
 	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, float* PoseIdx, float* dataBaseIndex) {
 		FExampleComputeShaderDispatchParams Params(1, 1, 1);
 
@@ -105,16 +107,22 @@ public:
 		Params.weightsSqrt = weightsSqrt;
 		Params.dataBaseIdx = dataBaseIndex;
 		Params.poseIdx = PoseIdx;
-	}
+	}*/
 	
 	void Execute(FExampleComputeShaderDispatchParams Params, TArray<float>& Output)
 	{
-		;
+		
 		FExampleComputeShaderInterface::Dispatch(Params, [this, &Output, Params](float* OutputVal)
 			{
-				Output.Add(OutputVal[0] + OutputVal[1] + OutputVal[2] + OutputVal[3] + OutputVal[4] + OutputVal[5] + OutputVal[6]);
-				Output.Add(OutputVal[7]);
-				Output.Add(OutputVal[8]);
+				for (int i = 0; i < 100000; i += 9) {
+					computeShaderResult.Add(OutputVal[i] + OutputVal[i+1] + OutputVal[i+2] + OutputVal[i + 3] + OutputVal[i + 4] + OutputVal[i + 5] + OutputVal[i + 6]);
+					//UE_LOG(LogTemp, Warning, TEXT("data base idx : %f"), OutputVal[i + 7]);
+					//UE_LOG(LogTemp, Warning, TEXT("pose idx : %f"), OutputVal[i + 8]);
+				
+				}
+				
+				//computeShaderResult.Add(OutputVal[7]);
+				//computeShaderResult.Add(OutputVal[8]);
 			});
 	}
 

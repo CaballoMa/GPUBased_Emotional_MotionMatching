@@ -344,20 +344,21 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 				index += 1;
 				FSearchResult NewSearchResult = Database->Search(SearchContext, inData, index);
 				FExampleComputeShaderInterface::check_connection();
-				/*
+				
 				if (NewSearchResult.PoseCost.GetTotalCost() < SearchResult.PoseCost.GetTotalCost())
 				{
 					bJumpToPose = true;
 					SearchResult = NewSearchResult;
 					SearchContext.UpdateCurrentBestCost(SearchResult.PoseCost);
-				}*/
+				}
 			}
 		}
 
 		//1. Waiting for Compute Shader finishing the job
 		//2. For-loop each SearchResult to find a BestCost 
 		//3. 
-		/* #if UE_POSE_SEARCH_TRACE_ENABLED
+		/*
+		#if UE_POSE_SEARCH_TRACE_ENABLED
 		SearchContext.BestCandidates.Add(PoseCost, PoseIdx, Database, EPoseCandidateFlags::Valid_Pose);
 		#endif*/
 

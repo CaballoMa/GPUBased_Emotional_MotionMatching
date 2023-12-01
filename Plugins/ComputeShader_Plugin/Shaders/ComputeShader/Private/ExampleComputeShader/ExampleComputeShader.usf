@@ -7,28 +7,30 @@ Buffer<float> DatabaseIdx;
 Buffer<float> PoseIdx;
 RWBuffer<float> PartialCosts;
 
-[numthreads(7, 1, 1)]
+[numthreads(7, 100, 1)]
 void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {
     int index = DTid.x * 4;
+    int longIndex = DTid.y*DTid.z* 28 +  DTid.x * 4;
+    int currNum = (DTid.y)*9;
 
     if (index + 3 < 28)
     {
-        float4 VA = float4(A[index], A[index + 1], A[index + 2], A[index + 3]);
+        float4 VA = float4(A[longIndex], A[longIndex + 1], A[longIndex + 2], A[longIndex + 3]);
         float4 VB = float4(B[index], B[index + 1], B[index + 2], B[index + 3]);
-        float4 VW = float4(WeightsSqrt[index], WeightsSqrt[index + 1], WeightsSqrt[index + 2], WeightsSqrt[index + 3]);
+        float4 VW = float4(WeightsSqrt[longIndex], WeightsSqrt[longIndex + 1], WeightsSqrt[longIndex + 2], WeightsSqrt[longIndex + 3]);
 
         float4 Diff = VA - VB;
         float4 WeightedDiff = Diff * VW;
         float4 PartialCost = dot(WeightedDiff, WeightedDiff);
 
-        //PartialCosts[DTid.x] = dot(PartialCost, float4(1, 1, 1, 1));
-        PartialCosts[DTid.x] = PartialCost;
+        PartialCosts[DTid.x+currNum] = dot(PartialCost, float4(1, 1, 1, 1));
+        //PartialCosts[DTid.x+currNum] = PartialCost;
         if (DTid.x == 6)
         {
-            PartialCosts[7] = DatabaseIdx[0];
-            PartialCosts[8] = PoseIdx[0];
+            PartialCosts[7+currNum] = DatabaseIdx[currNum];
+            PartialCosts[8+currNum] = PoseIdx[currNum];
         }
     }
 }

@@ -660,7 +660,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		Result = collectingComputeShaderContext(SearchContext, computeShader_input, dataBaseIndex);
 		//Result = SearchBruteForce(SearchContext);
 	}
-	/*
+	
 	if (PoseSearchMode != EPoseSearchMode::BruteForce)
 	{
 #if UE_POSE_SEARCH_TRACE_ENABLED
@@ -677,7 +677,7 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		}
 #endif // UE_POSE_SEARCH_TRACE_ENABLED
 	}
-	*/
+	
 	return Result;
 }
 
@@ -1030,7 +1030,13 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 		TArray<float> outputFromBuffer;
 		TArray<float> poseIdxArr;
 		float dbIdx = dataBaseIndex;
-		for (int32 PoseIdx = 0; PoseIdx < SearchIndex.GetNumPoses(); ++PoseIdx)
+
+		FExampleComputeShaderDispatchParams Params(1, 1000, 1);
+		TArray<float> new_queryValues;
+		new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
+
+		Params.B = new_queryValues;
+		for (int32 PoseIdx = 0; PoseIdx < 100000; ++PoseIdx)
 		{
 			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
 			poseIdxArr.Add(PoseIdx);
@@ -1051,25 +1057,20 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 			computeShader_input.poseValueArray.Add(array_poseValue);
 			computeShader_input.queryArray.Add(array_query);
 
-			TArray<float> new_queryValues;
-			new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
-
-			TArray<float> new_poseValues;
-			new_poseValues.Append(PoseValues.GetData(), PoseValues.Num());
-			if (PoseIdx == 0)
-			{
-				FExampleComputeShaderDispatchParams Params(1, 1, 1);
-
-				Params.A = new_poseValues;
-				Params.B = new_queryValues;
-				Params.weightsSqrt = weightsSqrt;
-				Params.dataBaseIdx = &dbIdx;
-				Params.poseIdx = &poseIdxArr[PoseIdx];
-				Params.arrayLength = new_poseValues.Num();
-				newAsyncExecution->Execute(Params, outputFromBuffer);
-			}
+			//TArray<float> new_poseValues;
+			//new_poseValues.Append(PoseValues.GetData(), PoseValues.Num());
+			
+			Params.A.Append(PoseValues.GetData(), PoseValues.Num());
+			
+			Params.weightsSqrt.Append(weightsSqrt.GetData(), weightsSqrt.Num());
+			Params.dataBaseIdx.Add(dbIdx);
+			Params.poseIdx.Add(PoseIdx);
+			Params.arrayLength.Add(new_queryValues.Num());
+			//newAsyncExecution->Execute(Params, outputFromBuffer);
 		}
+
+		newAsyncExecution->Execute(Params, outputFromBuffer);
 
 		/*while (true)
 		{
@@ -1087,9 +1088,9 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::collectingComputeShaderContex
 			}
 		}*/
 
-		const float NotifyAddend = SearchIndex.PoseMetadata[bestIdx].GetCostAddend();
-		result.PoseCost = FPoseSearchCost(bestCost, NotifyAddend, 0.0);
-		result.PoseIdx = bestIdx;
+		//const float NotifyAddend = SearchIndex.PoseMetadata[bestIdx].GetCostAddend();
+		//result.PoseCost = FPoseSearchCost(bestCost, NotifyAddend, 0.0);
+		//result.PoseIdx = bestIdx;
 		
 	}
 	return result;
