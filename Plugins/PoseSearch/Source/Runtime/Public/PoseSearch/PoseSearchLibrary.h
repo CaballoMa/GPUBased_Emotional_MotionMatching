@@ -152,6 +152,7 @@ private:
 	void build_compute_in_data();
 
 public:
+
 	/**
 	* Implementation of the core motion matching algorithm
 	*

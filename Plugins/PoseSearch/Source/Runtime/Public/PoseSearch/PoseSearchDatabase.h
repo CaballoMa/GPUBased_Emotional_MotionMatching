@@ -259,10 +259,17 @@ class POSESEARCH_API UPoseSearchDatabase : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	//Used for Compute shader
+	
+	UExampleComputeShaderLibrary_AsyncExecution* newAsyncExecution = NewObject<UExampleComputeShaderLibrary_AsyncExecution>();
+	void OnBroadcastReceived(float Cost, float DatabaseIdx, float PoseIdx);
+	void BindToSender(UExampleComputeShaderLibrary_AsyncExecution* Sender) const;
+	TArray<TArray<float>> OutputFromBuffer = {};
+	TArray<TArray<float>>* OutputFromBufferPtr = &OutputFromBuffer;
+	mutable FCriticalSection CriticalSection;
+	mutable FExampleComputeShaderDispatchParams* ParamPtr = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Preview")
 	int32 DataBaseIndex = 0;
-
+	FRenderCommandFence LastRenderFence;
 	// The Motion Database Config sets what channels this database will use to match against (bones, trajectory and what properties of those you’re interested in, such as position and velocity).
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Database", DisplayName="Config")
 	TObjectPtr<const UPoseSearchSchema> Schema;
@@ -369,5 +376,5 @@ private:
 	UE::PoseSearch::FSearchResult SearchPCAKDTree(UE::PoseSearch::FSearchContext& SearchContext) const;
 	UE::PoseSearch::FSearchResult SearchBruteForce(UE::PoseSearch::FSearchContext& SearchContext) const;
 
-	UE::PoseSearch::FSearchResult collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
+	void collectingComputeShaderContext(UE::PoseSearch::FSearchContext& SearchContext, dataInComputeShader& my_inpudata, int dataBaseIndex) const;
 };
