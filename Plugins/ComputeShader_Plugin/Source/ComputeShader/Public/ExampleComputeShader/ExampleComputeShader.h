@@ -129,10 +129,6 @@ public:
 					for (int i = 9; i < 921600; i += 9) {
 						float poseIdx = OutputVal[i + 8];
 						cost = OutputVal[i] + OutputVal[i + 1] + OutputVal[i + 2] + OutputVal[i + 3] + OutputVal[i + 4] + OutputVal[i + 5] + OutputVal[i + 6];
-						//UE_LOG(LogTemp, Warning, TEXT("current i idx : %lld"), i/9);
-						//UE_LOG(LogTemp, Warning, TEXT("pose idx : %f"), OutputVal[i + 7]);
-						//UE_LOG(LogTemp, Warning, TEXT("pose idx : %f"), OutputVal[i + 8]);
-						
 						if (bestcost > cost)
 						{
 							bestcost = cost;

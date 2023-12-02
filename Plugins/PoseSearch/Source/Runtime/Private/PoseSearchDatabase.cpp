@@ -685,11 +685,21 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 			}
 #endif
 		}
-		else
-		{
-			Result = SearchBruteForce(SearchContext);
-		}
 		
+#if UE_POSE_SEARCH_TRACE_ENABLED
+		SearchContext.BestCandidates.Add(this);
+#endif 
+
+		if (Result.PoseIdx != INDEX_NONE)
+		{
+			Result.AssetTime = GetNormalizedAssetTime(Result.PoseIdx);
+			Result.Database = this;
+		}
+
+#if UE_POSE_SEARCH_TRACE_ENABLED
+		Result.BruteForcePoseCost = Result.PoseCost;
+#endif
+
 	}
 
 
@@ -1067,7 +1077,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 		new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
 		Params.B = new_queryValues;
-		for (int32 PoseIdx = 0; PoseIdx < 102400; PoseIdx+=1)
+		for (int32 PoseIdx = 0; PoseIdx < 102400; PoseIdx += 1)
 		{
 			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
 			dataInPoseValueArray array_poseValue;
