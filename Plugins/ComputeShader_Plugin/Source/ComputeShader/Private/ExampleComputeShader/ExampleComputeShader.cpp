@@ -178,7 +178,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 
-					float* Buffer = (float*)GPUBufferReadback->Lock(900000 * sizeof(float));
+					float* Buffer = (float*)GPUBufferReadback->Lock(921600 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
 

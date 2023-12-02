@@ -1062,12 +1062,12 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 		int bestIdx = 0;
 		float dbIdx = dataBaseIndex;
 		//==========
-		FExampleComputeShaderDispatchParams Params(1, 1000, 1);
+		FExampleComputeShaderDispatchParams Params(1, 32, 32);
 		TArray<float> new_queryValues;
 		new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
 		Params.B = new_queryValues;
-		for (int32 PoseIdx = 0; PoseIdx < 100000; PoseIdx+=1)
+		for (int32 PoseIdx = 0; PoseIdx < 102400; PoseIdx+=1)
 		{
 			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
 			dataInPoseValueArray array_poseValue;

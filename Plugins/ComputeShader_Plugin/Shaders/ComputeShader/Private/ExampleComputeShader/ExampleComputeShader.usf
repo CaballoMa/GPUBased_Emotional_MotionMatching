@@ -13,7 +13,7 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
 {
     int index = DTid.x * 4;
     //int currNum = (DTid.y*100+DTid.z);
-    int currNum = DTid.y;
+    int currNum = DTid.y + 3200*DTid.z;
     int longIndex = currNum * 28 +  DTid.x * 4;
     
 
