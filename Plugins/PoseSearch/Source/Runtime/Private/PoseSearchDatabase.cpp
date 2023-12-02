@@ -1067,7 +1067,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 		new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
 		Params.B = new_queryValues;
-		for (int32 PoseIdx = 0; PoseIdx < 100000; ++PoseIdx)
+		for (int32 PoseIdx = 0; PoseIdx < 100000; PoseIdx+=1)
 		{
 			const TConstArrayView<float> PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
 			dataInPoseValueArray array_poseValue;

@@ -162,7 +162,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 			PassParameters->PartialCosts = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_FLOAT));
 
-			auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
+			auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), 1);
 			GraphBuilder.AddPass(
 				RDG_EVENT_NAME("ExecuteExampleComputeShader"),
 				PassParameters,
@@ -178,7 +178,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 
-					float* Buffer = (float*)GPUBufferReadback->Lock(9 * sizeof(float));
+					float* Buffer = (float*)GPUBufferReadback->Lock(900000 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
 
