@@ -157,7 +157,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 
 			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
-				FRDGBufferDesc::CreateBufferDesc(sizeof(float), 9 * NumIdentifyInputs),
+				FRDGBufferDesc::CreateBufferDesc(sizeof(float), 3 * NumIdentifyInputs),
 				TEXT("OutputBuffer"));
 
 			PassParameters->PartialCosts = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_FLOAT));
@@ -178,7 +178,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
 
-					float* Buffer = (float*)GPUBufferReadback->Lock(921600 * sizeof(float));
+					float* Buffer = (float*)GPUBufferReadback->Lock(307200 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
 

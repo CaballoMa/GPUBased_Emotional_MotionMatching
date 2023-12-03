@@ -7,25 +7,30 @@ Buffer<float> DatabaseIdx;
 Buffer<float> PoseIdx;
 RWBuffer<float> PartialCosts;
 
-[numthreads(7, 100, 1)]
+[numthreads(1, 10, 10)]
 void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {
-    int index = DTid.x * 4;
+    int index = DTid.x;
     //int currNum = (DTid.y*100+DTid.z);
-    int currNum = DTid.y + 3200 * DTid.z;
-    int longIndex = currNum * 28 + DTid.x * 4;
-    
-        float4 VA = float4(A[longIndex], A[longIndex + 1], A[longIndex + 2], A[longIndex + 3]);
-        float4 VB = float4(B[index], B[index + 1], B[index + 2], B[index + 3]);
-        float4 VW = float4(WeightsSqrt[longIndex], WeightsSqrt[longIndex + 1], WeightsSqrt[longIndex + 2], WeightsSqrt[longIndex + 3]);
+    int currNum = DTid.y + 320 * DTid.z;
+    int longIndex = currNum * 28;
+    float4 overallCost;
+    for(int q=0; q<7; q++){
+        float4 VA = float4(A[longIndex + q * 4 ], A[longIndex + q * 4  + 1], A[longIndex + q * 4  + 2], A[longIndex + q * 4  + 3]);
+        float4 VB = float4(B[index + q * 4 ], B[index + q * 4 + 1], B[index + q * 4  + 2], B[index + q * 4  + 3]);
+        float4 VW = float4(WeightsSqrt[longIndex + q * 4 ], WeightsSqrt[longIndex + q * 4  + 1], WeightsSqrt[longIndex + q * 4  + 2], WeightsSqrt[longIndex + q * 4  + 3]);
 
         float4 Diff = VA - VB;
         float4 WeightedDiff = Diff * VW;
         float4 PartialCost = dot(WeightedDiff, WeightedDiff);
 
-        PartialCosts[DTid.x + currNum * 9] = dot(PartialCost, float4(1, 1, 1, 1));
+        //PartialCosts[q + currNum * 9] = dot(PartialCost, float4(1, 1, 1, 1));
+        overallCost += dot(PartialCost, float4(1, 1, 1, 1));
         //PartialCosts[DTid.x+currNum*9] = PartialCost;
-        PartialCosts[7 + currNum * 9] = DatabaseIdx[currNum];
-        PartialCosts[8 + currNum * 9] = PoseIdx[currNum];
+    }
+        PartialCosts[currNum * 3] = overallCost;
+        
+        PartialCosts[1 + currNum * 3] = DatabaseIdx[currNum];
+        PartialCosts[2 + currNum * 3] = PoseIdx[currNum];
 }

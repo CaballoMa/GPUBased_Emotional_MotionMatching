@@ -120,20 +120,22 @@ public:
 			{
 				if (outputFromDatabase != nullptr)
 				{
-					float cost = OutputVal[0] + OutputVal[1] + OutputVal[2] + OutputVal[3] + OutputVal[4] + OutputVal[5] + OutputVal[6];
+					float cost = OutputVal[0];
 					float bestcost = FLT_MAX;
 					CriticalSection->Lock();
 					outputFromDatabase->Empty();
 					bestcost = cost;
-					outputFromDatabase->Add({ cost, OutputVal[7], OutputVal[8] });
-					for (int i = 9; i < 921600; i += 9) {
-						float poseIdx = OutputVal[i + 8];
-						cost = OutputVal[i] + OutputVal[i + 1] + OutputVal[i + 2] + OutputVal[i + 3] + OutputVal[i + 4] + OutputVal[i + 5] + OutputVal[i + 6];
+					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
+					for (int i = 3; i <307200; i += 3) {
+						float poseIdx = OutputVal[i + 2];
+						//UE_LOG(LogTemp, Warning, TEXT("current i idx is : %lld"), poseIdx);
+						//UE_LOG(LogTemp, Warning, TEXT("current pose idx is : %f"), poseIdx);
+						cost = OutputVal[i] ;
 						if (bestcost > cost)
 						{
 							bestcost = cost;
 							outputFromDatabase->RemoveAt(0);
-							outputFromDatabase->Add({ cost, OutputVal[i + 7], poseIdx });
+							outputFromDatabase->Add({ cost, OutputVal[i + 1], poseIdx });
 						}
 					}
 					CriticalSection->Unlock();

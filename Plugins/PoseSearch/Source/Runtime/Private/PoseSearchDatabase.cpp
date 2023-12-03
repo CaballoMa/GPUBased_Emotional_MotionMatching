@@ -1083,20 +1083,20 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			dataInPoseValueArray array_poseValue;
 			dataInQueryArray array_query;
 
-			array_poseValue.databaseIndex = dataBaseIndex;
-			array_poseValue.poseIdx = PoseIdx;
-			array_query.databaseIndex = dataBaseIndex;
-			array_query.poseIdx = PoseIdx;
-			array_poseValue.poseValues = PoseValues;
-			array_query.queryValues = QueryValues;
+			//array_poseValue.databaseIndex = dataBaseIndex;
+			//array_poseValue.poseIdx = PoseIdx;
+			//array_query.databaseIndex = dataBaseIndex;
+			//array_query.poseIdx = PoseIdx;
+			//array_poseValue.poseValues = PoseValues;
+			//array_query.queryValues = QueryValues;
 			TArray<float> weightsSqrt;
 			for (int i = 0; i < SearchIndex.WeightsSqrt.Num(); i++)
 			{
 				weightsSqrt.Add(SearchIndex.WeightsSqrt[i]);
 			}
 
-			computeShader_input.poseValueArray.Add(array_poseValue);
-			computeShader_input.queryArray.Add(array_query);
+			//computeShader_input.poseValueArray.Add(array_poseValue);
+			//computeShader_input.queryArray.Add(array_query);
 
 
 			//TArray<float> new_poseValues;
