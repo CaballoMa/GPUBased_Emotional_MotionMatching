@@ -7,7 +7,7 @@ Buffer<float> DatabaseIdx;
 Buffer<float> PoseIdx;
 RWBuffer<float> PartialCosts;
 
-[numthreads(1, 10, 10)]
+[numthreads(1, 20, 20)]
 void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {

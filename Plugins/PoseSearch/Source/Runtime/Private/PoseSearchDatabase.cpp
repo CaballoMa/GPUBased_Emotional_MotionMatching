@@ -1072,7 +1072,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 		int bestIdx = 0;
 		float dbIdx = dataBaseIndex;
 		//==========
-		FExampleComputeShaderDispatchParams Params(1, 32, 32);
+		FExampleComputeShaderDispatchParams Params(1, 16, 16);
 		TArray<float> new_queryValues;
 		new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
