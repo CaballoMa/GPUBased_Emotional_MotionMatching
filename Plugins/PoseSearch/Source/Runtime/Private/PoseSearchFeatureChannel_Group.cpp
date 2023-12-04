@@ -58,7 +58,7 @@ void UPoseSearchFeatureChannel_GroupBase::BuildQuery(UE::PoseSearch::FSearchCont
 		if (const UPoseSearchFeatureChannel* SubChannel = SubChannelPtr.Get())
 		{
 			SubChannel->BuildQuery(SearchContext, InOutQuery);
-			//UE_LOG(LogTemp, Warning, TEXT("sub channel -- : %s"), *SubChannelPtr.GetName());
+			UE_LOG(LogTemp, Warning, TEXT("sub channel -- : %s"), *SubChannelPtr.GetName());
 		}
 	}
 }

@@ -126,16 +126,16 @@ public:
 					outputFromDatabase->Empty();
 					bestcost = cost;
 					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
-					for (int i = 3; i <307200; i += 3) {
-						float poseIdx = OutputVal[i + 2];
-						//UE_LOG(LogTemp, Warning, TEXT("current i idx is : %lld"), poseIdx);
-						//UE_LOG(LogTemp, Warning, TEXT("current pose idx is : %f"), poseIdx);
-						cost = OutputVal[i] ;
-						if (bestcost > cost)
+					for (int i = 3; i < 307200; i += 3) {
+						if (OutputVal[i] != NULL)
 						{
-							bestcost = cost;
-							outputFromDatabase->RemoveAt(0);
-							outputFromDatabase->Add({ cost, OutputVal[i + 1], poseIdx });
+							cost = OutputVal[i];
+							if (bestcost > cost)
+							{
+								bestcost = cost;
+								outputFromDatabase->RemoveAt(0);
+								outputFromDatabase->Add({ cost, OutputVal[i + 1], OutputVal[i + 2] });
+							}
 						}
 					}
 					CriticalSection->Unlock();
