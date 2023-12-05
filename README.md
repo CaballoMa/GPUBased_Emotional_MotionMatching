@@ -29,8 +29,8 @@ Traditional Motion matching is CPU-based, and usually only runs on the main char
 #### 1. download the /plugin file in this repository
 #### 2. Drag it in to yourproject/plugin
 #### 3. Build the motion matching database(can also buy from UE marketplace)
-#### 4. Built the config File
-#### 5. Built the Animation blueprint using our custom node.
+#### 4. Build the config File
+#### 5. Build the Animation blueprint using our custom node.
 #### 6. Run motion Matching
 
 
