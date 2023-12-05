@@ -6,11 +6,27 @@ Han Wang & Xiaoyue Ma
  Milestone2 Slide: https://docs.google.com/presentation/d/10Vmtje1TYG2by99pjaSxHmJE1uDU_mSqM6aJXk8oVE4/edit?usp=sharing
  Milestone3 Slide: https://docs.google.com/presentation/d/1LE8DsNWHqecslTkHEJP5CkqP78D5CWmJ1i31S9SzzZw/edit?usp=sharing
 
+
 # Overview Output Video
+
+
+# Motion Matching Introduction
+
+
+
+
+# Working Flow
+
+
+# Optimization Process
+
+
 
 # Performance Analysis
 
-# 
+
+
+# Reference
 
  
  
