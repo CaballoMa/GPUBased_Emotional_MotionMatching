@@ -10,7 +10,11 @@ Han Wang & Xiaoyue Ma
 
 
 ## Overview Output Video
-[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)](https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview)
+
+
+https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/assets/112833135/c4f82d19-fcff-48bb-b192-62bb7926bc35
+
+
 
 ## Motion Matching Introduction
 
