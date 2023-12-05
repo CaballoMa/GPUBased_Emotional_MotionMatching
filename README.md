@@ -37,8 +37,7 @@ Traditional Motion matching is CPU-based, and usually only runs on the main char
 
 #### 5. Build the Animation blueprint using our custom node.
 
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/animation1.png" width="400" height="150">
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/animation2.png" width="400" height="150">
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/animation1.png" width="400" height="150"><img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/animation2.png" width="400" height="75">
 
 #### 6. Run motion Matching
 just run your character
