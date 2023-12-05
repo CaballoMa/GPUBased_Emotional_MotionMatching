@@ -39,7 +39,10 @@ The adoption of GPU parallelism emerges as a pivotal enhancement, ensuring not o
 
 <img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow2.png" width="800" height="500">
 
-Our approach is based on UE5.3, an experimental compute shader. Based on the idea of the source code and the paper, we built a plugin that created a custom node. As shown in the graph, we implemented the GPU-based parallel calculation mainly using the compute shader. Instead of using a for loop to iter through the poses to compute the error(cost), we collected the data and then used float buffers to transfer the data in and out of the GPU. Also, the game thread will not wait for the render thread to finish the calculation, it will use the data from the previous 3 frames to decide which pose will be played. After the GPU side finishes the calculation, we will store the data used for future motion matching. This process will be parallel to the main game thread and won't affect the current frame rate.
+Our approach is based on UE5.3, an experimental compute shader. Based on the idea of the source code and the paper, we built a plugin that created a custom node. As shown in the graph, we implemented the GPU-based parallel calculation mainly using the compute shader. 
+
+
+Instead of using a for loop to iter through the poses to compute the error(cost), we collected the data and then used float buffers to transfer the data in and out of the GPU. Also, the game thread will not wait for the render thread to finish the calculation, it will use the data from the previous 3 frames to decide which pose will be played. After the GPU side finishes the calculation, we will store the data used for future motion matching. This process will be parallel to the main game thread and won't affect the current frame rate.
 
 ## Optimization Process
 
@@ -48,9 +51,14 @@ Our approach is based on UE5.3, an experimental compute shader. Based on the ide
 
 ## Performance Analysis
 
+Still working on it.
+
+## Reference
 
 
-# Reference
+[GPU-based Motion Matching for Crowds in the Unreal Engine]([https://docs.google.com/presentation/d/1LE8DsNWHqecslTkHEJP5CkqP78D5CWmJ1i31S9SzzZw/edit?usp=sharing](https://dl.acm.org/doi/10.1145/3415264.3425474)https://dl.acm.org/doi/10.1145/3415264.3425474)
+
+
 
  
  
