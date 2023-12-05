@@ -10,8 +10,8 @@ Han Wang & Xiaoyue Ma
 
 
 ## Overview Output Video
-[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)]([https://youtu.be/vt5fpE0bzSY](https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview))
-<iframe src="https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview" width="640" height="480" allow="autoplay"></iframe>
+[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)]([https://youtu.be/vt5fpE0bzSY](https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview)
+
 ## Motion Matching Introduction
 
 Motion matching is a data-driven animation technique used predominantly in video games and virtual reality to achieve lifelike character movements. Departing from traditional handcrafted animations, motion matching relies on a vast database of motion capture data. In real-time, the system queries and selects relevant motion data based on the current state and user input, seamlessly blending and adapting animations for a more realistic and dynamic appearance. This approach enhances adaptability to environmental changes, reduces repetitiveness, and contributes to a more immersive and engaging user experience by creating responsive and authentic character animations.
