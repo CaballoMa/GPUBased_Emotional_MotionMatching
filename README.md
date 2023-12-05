@@ -38,7 +38,7 @@ This inherent limitation is circumvented by migrating the computational workload
 
 ## Optimization Process
 
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="500">
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="400">
 
 
 ## Performance Analysis
