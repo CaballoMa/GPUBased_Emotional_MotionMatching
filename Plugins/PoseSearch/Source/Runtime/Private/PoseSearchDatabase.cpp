@@ -22,6 +22,8 @@ DECLARE_CYCLE_STAT_EXTERN(TEXT("Search PCA/KNN"), STAT_PoseSearch_PCAKNN, STATGR
 DEFINE_STAT(STAT_PoseSearch_BruteForce);
 DEFINE_STAT(STAT_PoseSearch_PCAKNN);
 
+#define FRAME_RECORD_LENGTH 20
+
 namespace UE::PoseSearch
 {
 
@@ -667,6 +669,9 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		}
 		if (!OutputFromBuffer.IsEmpty())
 		{
+			float startTime = newAsyncExecution->FrameStartTime[OutputFromBuffer[0][1]];
+			float endTime = newAsyncExecution->FrameEndTime[OutputFromBuffer[0][1]];
+			SearchContext.PredictingTime = endTime - startTime;
 			FSearchResult result;
 			
 			const float NotifyAddend = SearchIndex.PoseMetadata[OutputFromBuffer[0][2]].GetCostAddend();
@@ -1073,7 +1078,8 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 
 	float bestCost = FLT_MAX;
 	int bestIdx = 0;
-	float dbIdx = dataBaseIndex;
+	//float dbIdx = dataBaseIndex;
+	float currframe = newAsyncExecution->currFrame;
 	//==========
 	FExampleComputeShaderDispatchParams Params(1, 16, 16);
 	TArray<float> new_queryValues;
@@ -1102,15 +1108,26 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			Params.A.Append(PoseValues.GetData(), PoseValues.Num());
 
 			Params.weightsSqrt.Append(weightsSqrt.GetData(), weightsSqrt.Num());
-			Params.dataBaseIdx.Add(dbIdx);
+			Params.dataBaseIdx.Add(currframe);
 			Params.poseIdx.Add(PoseIdx);
 			Params.arrayLength.Add(new_queryValues.Num());
 		}
 	}
 
 	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr);
+	double TimeInSeconds = FPlatformTime::Seconds();
+
+	newAsyncExecution->FrameStartTime.Add(TimeInSeconds);
+
+	if (newAsyncExecution->currFrame >= 20)
+	{
+		newAsyncExecution->currFrame = 0;
+	}
+	else
+	{
+		newAsyncExecution->currFrame++;
+	}
 	
-	newAsyncExecution->currFrame++;
 	//return result;
 }
 

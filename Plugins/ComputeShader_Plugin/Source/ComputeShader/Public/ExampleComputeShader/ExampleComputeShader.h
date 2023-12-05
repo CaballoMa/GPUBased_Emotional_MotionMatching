@@ -94,9 +94,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FMyCustomEventDelegate, float, Cost, float, DatabaseIdx, float, PoseIdx);
 	FMyCustomEventDelegate OnBroadcast;
 	bool bIsBoundToSender = false;
-	int32 currFrame;
+	int32 currFrame = 1;
 	TArray<TArray<float>>* outputFromDatabase = nullptr;
-
+	TArray<float> FrameEndTime = {};
+	TArray<float> FrameStartTime = {};
 	// Execute the actual load
 	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, float* PoseIdx, float* dataBaseIndex) {
 		/*FExampleComputeShaderDispatchParams Params(1, 1, 1);
@@ -135,9 +136,13 @@ public:
 								bestcost = cost;
 								outputFromDatabase->RemoveAt(0);
 								outputFromDatabase->Add({ cost, OutputVal[i + 1], OutputVal[i + 2] });
+								/*float TimeInSeconds = FPlatformTime::Seconds();
+								FrameEndTime[OutputVal[i + 1]] = TimeInSeconds;*/
 							}
 						}
 					}
+					float TimeInSeconds = FPlatformTime::Seconds();
+					FrameEndTime.Add(TimeInSeconds);
 					CriticalSection->Unlock();
 				}
 			});
