@@ -265,6 +265,8 @@ public:
 	void BindToSender(UExampleComputeShaderLibrary_AsyncExecution* Sender) const;
 	TArray<TArray<float>> OutputFromBuffer = {};
 	TArray<TArray<float>>* OutputFromBufferPtr = &OutputFromBuffer;
+	TArray<float> FrameStartTime = {};
+
 	mutable FCriticalSection CriticalSection;
 	mutable FExampleComputeShaderDispatchParams* ParamPtr = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Preview")

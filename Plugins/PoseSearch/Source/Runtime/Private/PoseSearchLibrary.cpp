@@ -24,6 +24,8 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PoseSearchLibrary)
 
 #define LOCTEXT_NAMESPACE "PoseSearchLibrary"
+#define SIMPLE_NUM_PER_SEC 5
+#define SIMPLE_TIME 1.5
 
 #if ENABLE_DRAW_DEBUG && ENABLE_ANIM_DEBUG
 TAutoConsoleVariable<int32> CVarAnimMotionMatchDrawQueryEnable(TEXT("a.MotionMatch.DrawQuery.Enable"), 0, TEXT("Enable / Disable MotionMatch Draw Query"));
@@ -441,6 +443,7 @@ FPoseSearchQueryTrajectory UPoseSearchLibrary::ProcessTrajectory(const FPoseSear
 
 	FPoseSearchQueryTrajectory TrajectoryRootSpace = Trajectory;
 	const FTransform ToRootSpace = ComponentWorldTransform.Inverse();
+
 	for (FPoseSearchQueryTrajectorySample& Sample : TrajectoryRootSpace.Samples)
 	{
 		Sample.AccumulatedSeconds *= TrajectorySpeedMultiplierInv;

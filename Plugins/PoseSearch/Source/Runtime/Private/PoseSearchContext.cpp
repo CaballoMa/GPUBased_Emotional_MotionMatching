@@ -9,6 +9,8 @@
 #include "PoseSearch/PoseSearchTrajectoryTypes.h"
 #include "PoseSearchFeatureChannel_Position.h"
 
+#define MAX_ADVANCE_TIME 1.2
+
 namespace UE::PoseSearch
 {
 	
@@ -316,15 +318,16 @@ FVector FSearchContext::GetSampleVelocity(float SampleTimeOffset, const UPoseSea
 FTransform FSearchContext::GetRootAtTime(float Time, bool bUseHistoryRoot, bool bExtrapolate) const
 {
 	FTransform RootTransform = FTransform::Identity;
+
 	if (bUseHistoryRoot)
 	{
 		check(History);
-		History->GetRootTransformAtTime(Time, RootTransform, bExtrapolate);
+		History->GetRootTransformAtTime((Time + PredictingTime) > MAX_ADVANCE_TIME ? MAX_ADVANCE_TIME : (Time + PredictingTime), RootTransform, bExtrapolate);
 	}
 	else
 	{
 		check(Trajectory);
-		RootTransform = Trajectory->GetSampleAtTime(Time, bExtrapolate).GetTransform();
+		RootTransform = Trajectory->GetSampleAtTime((Time + PredictingTime) > MAX_ADVANCE_TIME ? MAX_ADVANCE_TIME : (Time + PredictingTime), bExtrapolate).GetTransform();
 	}
 
 	return RootTransform;
