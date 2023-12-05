@@ -23,11 +23,10 @@ Motion matching is a data-driven animation technique used predominantly in video
 Traditional Motion matching is CPU-based, and usually only runs on the main character. Our approach uses a GPU-based method to speed up the process and make it more suitable for multi-character motion-matching conditions.
 
 
-
-
-
-
 ## Working Flow
+
+
+
 
 
 ## Optimization Process
