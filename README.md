@@ -1,28 +1,28 @@
-## GPUBased_Emotional_MotionMatching
+# GPUBased_Emotional_MotionMatching
 Han Wang & Xiaoyue Ma
 
-# Milestone Slides
+## Milestone Slides
  Milestone1 Slide: https://docs.google.com/presentation/d/1ReOL6aRipmgVvq1oI5TzAEBSmwE4okE5VBqne8QOwO0/edit?usp=sharing
  Milestone2 Slide: https://docs.google.com/presentation/d/10Vmtje1TYG2by99pjaSxHmJE1uDU_mSqM6aJXk8oVE4/edit?usp=sharing
  Milestone3 Slide: https://docs.google.com/presentation/d/1LE8DsNWHqecslTkHEJP5CkqP78D5CWmJ1i31S9SzzZw/edit?usp=sharing
 
 
-# Overview Output Video
+## Overview Output Video
 
 
-# Motion Matching Introduction
-
-
-
-
-# Working Flow
-
-
-# Optimization Process
+## Motion Matching Introduction
 
 
 
-# Performance Analysis
+
+## Working Flow
+
+
+## Optimization Process
+
+
+
+## Performance Analysis
 
 
 
