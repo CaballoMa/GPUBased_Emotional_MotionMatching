@@ -10,7 +10,7 @@ Han Wang & Xiaoyue Ma
 
 
 ## Overview Output Video
-[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)]([https://youtu.be/vt5fpE0bzSY](https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview)
+[![Watch the video](https://i.stack.imgur.com/Vp2cE.png)](https://drive.google.com/file/d/1Oj95WtS5SRi21oiJXZHxwenxaPUB33Da/preview)
 
 ## Motion Matching Introduction
 
