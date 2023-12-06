@@ -669,9 +669,9 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		}
 		if (!OutputFromBuffer.IsEmpty())
 		{
-			float startTime = newAsyncExecution->FrameStartTime[OutputFromBuffer[0][1]];
-			float endTime = newAsyncExecution->FrameEndTime[OutputFromBuffer[0][1]];
-			SearchContext.PredictingTime = endTime - startTime;
+			//float startTime = newAsyncExecution->FrameStartTime[OutputFromBuffer[0][1]];
+			//float endTime = newAsyncExecution->FrameEndTime[OutputFromBuffer[0][1]];
+			//SearchContext.PredictingTime = endTime - startTime;
 			FSearchResult result;
 			
 			const float NotifyAddend = SearchIndex.PoseMetadata[OutputFromBuffer[0][2]].GetCostAddend();
@@ -1087,8 +1087,12 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 
 	//int overall_pose_num = SearchIndex.GetNumPoses();
 	//change this number to modify the pose number.
-	int current_pose_max = SearchIndex.GetNumPoses();
-	int start_point = 0;
+	int pose_sum = SearchIndex.GetNumPoses();
+	int step = int(floor(pose_sum / 4));
+	int current_pose_max = step * (*localFramePtr + 1);
+	int start_point = step * (*localFramePtr);
+
+
 	current_pose_max = fmin(current_pose_max, 102400);
 
 	Params.B = new_queryValues;
@@ -1122,11 +1126,19 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			Params.arrayLength.Add(new_queryValues.Num());
 		}
 	}
-	Params.needed_data.Add(float(current_pose_max));
+	Params.needed_data.Add(float(step));
+	*localFramePtr += 1;
+	if (*localFramePtr == 4) {
+		*localFramePtr -=4;
+	}
 
-	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr, current_pose_max);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("current local frame is : %lld"), *localFramePtr);
+
+	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr, step);
 	double TimeInSeconds = FPlatformTime::Seconds();
-
+	/*
 	newAsyncExecution->FrameStartTime.Add(TimeInSeconds);
 
 	if (newAsyncExecution->currFrame >= 20)
@@ -1137,15 +1149,15 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	{
 		newAsyncExecution->currFrame++;
 	}
-	
+	*/
 	//return result;
 }
 
 void UPoseSearchDatabase::OnBroadcastReceived(float Cost, float DatabaseIdx, float PoseIdx)
 {
 	OutputFromBuffer.Add({ Cost, DatabaseIdx, PoseIdx });
-}
 
+}
 void UPoseSearchDatabase::BindToSender(UExampleComputeShaderLibrary_AsyncExecution* Sender) const
 {
 	if (Sender)

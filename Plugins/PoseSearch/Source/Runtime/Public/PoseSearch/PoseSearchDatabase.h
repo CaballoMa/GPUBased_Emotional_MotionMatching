@@ -267,6 +267,9 @@ public:
 	TArray<TArray<float>>* OutputFromBufferPtr = &OutputFromBuffer;
 	TArray<float> FrameStartTime = {};
 
+	int localFrame=0;
+	int* localFramePtr = &localFrame;
+
 	mutable FCriticalSection CriticalSection;
 	mutable FExampleComputeShaderDispatchParams* ParamPtr = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Preview")

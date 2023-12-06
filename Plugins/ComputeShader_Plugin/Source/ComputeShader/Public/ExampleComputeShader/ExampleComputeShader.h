@@ -147,8 +147,8 @@ public:
 						//UE_LOG(LogTemp, Warning, TEXT("current i idx is : %lld"), i);
 						//UE_LOG(LogTemp, Warning, TEXT("current pose idx is : %f"), OutputVal[i + 2]);
 					}
-					float TimeInSeconds = FPlatformTime::Seconds();
-					FrameEndTime.Add(TimeInSeconds);
+					//float TimeInSeconds = FPlatformTime::Seconds();
+					//FrameEndTime.Add(TimeInSeconds);
 					CriticalSection->Unlock();
 				}
 			});
