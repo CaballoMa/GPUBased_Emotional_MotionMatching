@@ -1085,9 +1085,15 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	TArray<float> new_queryValues;
 	new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
+	//int overall_pose_num = SearchIndex.GetNumPoses();
+	//change this number to modify the pose number.
+	int current_pose_max = SearchIndex.GetNumPoses();
+	int start_point = 0;
+	current_pose_max = fmin(current_pose_max, 102400);
+
 	Params.B = new_queryValues;
 	TConstArrayView<float> PoseValues;
-	for (int32 PoseIdx = 0; PoseIdx < 102400; PoseIdx += 1)
+	for (int32 PoseIdx = start_point; PoseIdx < current_pose_max; PoseIdx += 1)
 	{
 			PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
 			if (SearchFilters.AreFiltersValid(SearchIndex, PoseValues, QueryValues, PoseIdx, SearchIndex.PoseMetadata[PoseIdx]
@@ -1104,6 +1110,9 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			{
 				weightsSqrt.Add(SearchIndex.WeightsSqrt[i]);
 			}
+			if (PoseIdx == start_point) {
+				Params.needed_data.Add(float(PoseValues.Num()));
+			}
 
 			Params.A.Append(PoseValues.GetData(), PoseValues.Num());
 
@@ -1113,8 +1122,9 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			Params.arrayLength.Add(new_queryValues.Num());
 		}
 	}
+	Params.needed_data.Add(float(current_pose_max));
 
-	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr);
+	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr, current_pose_max);
 	double TimeInSeconds = FPlatformTime::Seconds();
 
 	newAsyncExecution->FrameStartTime.Add(TimeInSeconds);

@@ -25,6 +25,9 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 	TArray<float> dataBaseIdx;
 	TArray<float> poseIdx;
 	TArray<float> OutPut;
+	TArray<float> needed_data;
+
+
 	/*
 	struct dataOutComputeShader {
 		int32 databaseIndex;
@@ -95,9 +98,10 @@ public:
 	FMyCustomEventDelegate OnBroadcast;
 	bool bIsBoundToSender = false;
 	int32 currFrame = 1;
-	TArray<TArray<float>>* outputFromDatabase = nullptr;
 	TArray<float> FrameEndTime = {};
 	TArray<float> FrameStartTime = {};
+	TArray<TArray<float>>* outputFromDatabase = nullptr;
+
 	// Execute the actual load
 	virtual void Activate(TArray<float> weightsSqrt, TArray<float> new_poseValues, TArray<float> new_queryValues, int array_length, float* PoseIdx, float* dataBaseIndex) {
 		/*FExampleComputeShaderDispatchParams Params(1, 1, 1);
@@ -110,14 +114,14 @@ public:
 		Params.poseIdx = PoseIdx;*/
 	}
 	
-	void Execute(FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, FCriticalSection* CriticalSection, TArray<TArray<float>>* outputBuffer)
+	void Execute(FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, FCriticalSection* CriticalSection, TArray<TArray<float>>* outputBuffer, int num_pose)
 	{
 		if (outputFromDatabase == nullptr)
 		{
 			outputFromDatabase = outputBuffer;
 		}
 
-		FExampleComputeShaderInterface::Dispatch(Params, RenderFence, [this, Params, CriticalSection](float* OutputVal)
+		FExampleComputeShaderInterface::Dispatch(Params, RenderFence, [this, Params, CriticalSection, num_pose](float* OutputVal)
 			{
 				if (outputFromDatabase != nullptr)
 				{
@@ -127,19 +131,21 @@ public:
 					outputFromDatabase->Empty();
 					bestcost = cost;
 					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
-					for (int i = 3; i < 307200; i += 3) {
+					//372000
+					for (int i = 3; i < num_pose * 3; i += 3) {
 						if (OutputVal[i] != NULL)
 						{
+
 							cost = OutputVal[i];
 							if (bestcost > cost)
 							{
 								bestcost = cost;
 								outputFromDatabase->RemoveAt(0);
 								outputFromDatabase->Add({ cost, OutputVal[i + 1], OutputVal[i + 2] });
-								/*float TimeInSeconds = FPlatformTime::Seconds();
-								FrameEndTime[OutputVal[i + 1]] = TimeInSeconds;*/
 							}
 						}
+						//UE_LOG(LogTemp, Warning, TEXT("current i idx is : %lld"), i);
+						//UE_LOG(LogTemp, Warning, TEXT("current pose idx is : %f"), OutputVal[i + 2]);
 					}
 					float TimeInSeconds = FPlatformTime::Seconds();
 					FrameEndTime.Add(TimeInSeconds);

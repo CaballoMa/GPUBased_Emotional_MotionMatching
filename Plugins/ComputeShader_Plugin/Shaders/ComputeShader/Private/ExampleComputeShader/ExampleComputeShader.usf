@@ -1,5 +1,6 @@
 #include "/Engine/Public/Platform.ush"
 
+Buffer<float> neededData;
 Buffer<float> A;
 Buffer<float> B;
 Buffer<float> WeightsSqrt;
@@ -14,26 +15,31 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     int index = DTid.x;
     //int currNum = (DTid.y*100+DTid.z);
     int currNum = DTid.y + 320 * DTid.z;
-    int longIndex = currNum * 28;
-    float4 overallCost;
-    float4 VA, VB, VW, Diff, WeightedDiff;
-    float PartialCost;
+
+
+    if(currNum < neededData[1]){
+        int longIndex = currNum * 28;
+        float4 overallCost;
+        float4 VA, VB, VW, Diff, WeightedDiff;
+        float PartialCost;
     
-    for (int q = 0; q < 7; q++)
-    {
-        VA = float4(A[longIndex + q * 4], A[longIndex + q * 4 + 1], A[longIndex + q * 4 + 2], A[longIndex + q * 4 + 3]);
-        VB = float4(B[index + q * 4], B[index + q * 4 + 1], B[index + q * 4 + 2], B[index + q * 4 + 3]);
-        VW = float4(WeightsSqrt[longIndex + q * 4], WeightsSqrt[longIndex + q * 4 + 1], WeightsSqrt[longIndex + q * 4 + 2], WeightsSqrt[longIndex + q * 4 + 3]);
+        for (int q = 0; q < 7; q++)
+        {
+            VA = float4(A[longIndex + q * 4], A[longIndex + q * 4 + 1], A[longIndex + q * 4 + 2], A[longIndex + q * 4 + 3]);
+            VB = float4(B[index + q * 4], B[index + q * 4 + 1], B[index + q * 4 + 2], B[index + q * 4 + 3]);
+            VW = float4(WeightsSqrt[longIndex + q * 4], WeightsSqrt[longIndex + q * 4 + 1], WeightsSqrt[longIndex + q * 4 + 2], WeightsSqrt[longIndex + q * 4 + 3]);
 
-        Diff = VA - VB;
-        WeightedDiff = Diff * VW;
-        PartialCost = dot(WeightedDiff, WeightedDiff);
+            Diff = VA - VB;
+            WeightedDiff = Diff * VW;
+            PartialCost = dot(WeightedDiff, WeightedDiff);
 
-        overallCost += dot(PartialCost, float4(1, 1, 1, 1));
-    }
-    PartialCosts[currNum * 3] = overallCost;
+            overallCost += dot(PartialCost, float4(1, 1, 1, 1));
+        }
+        PartialCosts[currNum * 3] = overallCost;
         
-    PartialCosts[1 + currNum * 3] = DatabaseIdx[currNum];
-    PartialCosts[2 + currNum * 3] = PoseIdx[currNum];
+        PartialCosts[1 + currNum * 3] = DatabaseIdx[currNum];
+        PartialCosts[2 + currNum * 3] = PoseIdx[currNum];
+    }
+    
 }
 
