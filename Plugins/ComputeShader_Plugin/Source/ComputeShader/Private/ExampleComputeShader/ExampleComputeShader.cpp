@@ -132,7 +132,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			const void* poseIdx = (void*)Params.poseIdx.GetData();
 
 			const void* neededData = (void*)Params.needed_data.GetData();
-			int poseNum = int(Params.needed_data[1]);
+			int poseNum = int(Params.needed_data[Params.needed_data.Num() - 1]);
 			int NumInputsA = Params.A.Num();
 			int NumInputsB = Params.B.Num();
 			int NumIdentifyInputs = Params.dataBaseIdx.Num();
