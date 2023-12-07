@@ -17,14 +17,14 @@ DECLARE_STATS_GROUP(TEXT("ExampleComputeShader"), STATGROUP_ExampleComputeShader
 DECLARE_CYCLE_STAT(TEXT("ExampleComputeShader Execute"), STAT_ExampleComputeShader_Execute, STATGROUP_ExampleComputeShader);
 
 // This class carries our parameter declarations and acts as the bridge between cpp and HLSL.
-class COMPUTESHADER_API FExampleComputeShader: public FGlobalShader
+class COMPUTESHADER_API FExampleComputeShader : public FGlobalShader
 {
 public:
-	
+
 	DECLARE_GLOBAL_SHADER(FExampleComputeShader);
 	SHADER_USE_PARAMETER_STRUCT(FExampleComputeShader, FGlobalShader);
-	
-	
+
+
 	class FExampleComputeShader_Perm_TEST : SHADER_PERMUTATION_INT("TEST", 1);
 	using FPermutationDomain = TShaderPermutationDomain<
 		FExampleComputeShader_Perm_TEST
@@ -50,7 +50,7 @@ public:
 
 		// SHADER_PARAMETER_STRUCT_REF(FMyCustomStruct, MyCustomStruct)
 
-		
+
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, A)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, B)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, WeightsSqrt)
@@ -58,16 +58,16 @@ public:
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, PoseIdx)
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<float>, neededData)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float>, PartialCosts)
-		
-		
 
-	END_SHADER_PARAMETER_STRUCT()
+
+
+		END_SHADER_PARAMETER_STRUCT()
 
 public:
 	static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters& Parameters)
 	{
 		const FPermutationDomain PermutationVector(Parameters.PermutationId);
-		
+
 		return true;
 	}
 
@@ -219,7 +219,7 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 
 	GraphBuilder.Execute();
 	//RenderFence.BeginFence();
-	
+
 }
 
 void FExampleComputeShaderInterface::check_connection()

@@ -266,8 +266,10 @@ public:
 	TArray<TArray<float>> OutputFromBuffer = {};
 	TArray<TArray<float>>* OutputFromBufferPtr = &OutputFromBuffer;
 	TArray<float> FrameStartTime = {};
+	mutable float LastTime = -1.0;
+	mutable float CurrTime = -1.0;
 
-	int localFrame=0;
+	int localFrame = 0;
 	int* localFramePtr = &localFrame;
 
 	mutable FCriticalSection CriticalSection;

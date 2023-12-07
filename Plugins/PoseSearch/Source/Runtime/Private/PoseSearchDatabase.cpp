@@ -669,19 +669,29 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 		}
 		if (!OutputFromBuffer.IsEmpty())
 		{
-			//float startTime = newAsyncExecution->FrameStartTime[OutputFromBuffer[0][1]];
-			//float endTime = newAsyncExecution->FrameEndTime[OutputFromBuffer[0][1]];
-			//SearchContext.PredictingTime = endTime - startTime;
 			FSearchResult result;
 			
-			const float NotifyAddend = SearchIndex.PoseMetadata[OutputFromBuffer[0][2]].GetCostAddend();
-			result.PoseCost = FPoseSearchCost(OutputFromBuffer[0][0], NotifyAddend, 0.0);
-			result.PoseIdx = OutputFromBuffer[0][2];
+			int _bestIdx = 0;
+			float _bestCost = OutputFromBuffer[0][0];
+			if (OutputFromBuffer.Num() > 1)
+			{
+				for (int i = 1; i < OutputFromBuffer.Num(); i++)
+				{
+					if (OutputFromBuffer[i][0] < _bestCost)
+					{
+						_bestCost = OutputFromBuffer[i][0];
+						_bestIdx = i;
+					}
+				}
+			}
+			const float NotifyAddend = SearchIndex.PoseMetadata[OutputFromBuffer[_bestIdx][2]].GetCostAddend();
+			result.PoseCost = FPoseSearchCost(_bestCost, NotifyAddend, 0.1);
+			result.PoseIdx = OutputFromBuffer[_bestIdx][2];
 			Result = result;
 #if UE_POSE_SEARCH_TRACE_ENABLED
 			if (PoseSearchMode == EPoseSearchMode::BruteForce)
 			{
-				Result.BestPosePos = OutputFromBuffer[0][2];
+				Result.BestPosePos = OutputFromBuffer[_bestIdx][2];
 			}
 #endif // WITH_EDITORONLY_DATA
 
@@ -692,6 +702,10 @@ UE::PoseSearch::FSearchResult UPoseSearchDatabase::Search(UE::PoseSearch::FSearc
 				SearchContext.BestCandidates.Add(result.PoseCost, result.PoseIdx, this, EPoseCandidateFlags::Valid_Pose);
 			}
 #endif
+		}
+		else
+		{
+			Result = SearchBruteForce(SearchContext);
 		}
 
 		
@@ -1054,7 +1068,27 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	using namespace UE::PoseSearch;
 
 	const FSearchIndex& SearchIndex = GetSearchIndex();
-	//FSearchResult result;
+	//int overall_pose_num = SearchIndex.GetNumPoses();
+	//change this number to modify the pose number.
+	int pose_sum = SearchIndex.GetNumPoses();
+	int step = int(floor(pose_sum / 4));
+	//int current_pose_max = step * (*localFramePtr + 1);
+	//int start_point = step * (*localFramePtr);
+	int start_point = *localFramePtr;
+
+	//current_pose_max = fmin(current_pose_max, 102400);
+	int current_pose_max = fmin(step * 4, 102400);
+	if (CurrTime != -1)
+	{
+		LastTime = CurrTime;
+	}
+
+	CurrTime = FPlatformTime::Seconds() / 1000.0;
+
+	if (LastTime != -1 && !OutputFromBuffer.IsEmpty())
+	{
+		SearchContext.PredictingTime = (newAsyncExecution->currFrame - OutputFromBuffer[0][1]) * (CurrTime - LastTime) + *localFramePtr * 0.2;
+	}
 	
 	// since any PoseCost calculated here is at least SearchIndex.MinCostAddend,
 	// there's no point in performing the search if CurrentBestTotalCost is already better than that
@@ -1085,26 +1119,16 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	TArray<float> new_queryValues;
 	new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
-	//int overall_pose_num = SearchIndex.GetNumPoses();
-	//change this number to modify the pose number.
-	int pose_sum = SearchIndex.GetNumPoses();
-	int step = int(floor(pose_sum / 4));
-	int current_pose_max = step * (*localFramePtr + 1);
-	int start_point = step * (*localFramePtr);
-
-
-	current_pose_max = fmin(current_pose_max, 102400);
-
 	Params.B = new_queryValues;
 	TConstArrayView<float> PoseValues;
-	for (int32 PoseIdx = start_point; PoseIdx < current_pose_max; PoseIdx += 1)
+	for (int32 PoseIdx = start_point; PoseIdx < current_pose_max; PoseIdx += 4)
 	{
-			PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
-			if (SearchFilters.AreFiltersValid(SearchIndex, PoseValues, QueryValues, PoseIdx, SearchIndex.PoseMetadata[PoseIdx]
+		PoseValues = bReconstructPoseValues ? SearchIndex.GetReconstructedPoseValues(PoseIdx, ReconstructedPoseValuesBuffer) : SearchIndex.GetPoseValues(PoseIdx);
+		if (SearchFilters.AreFiltersValid(SearchIndex, PoseValues, QueryValues, PoseIdx, SearchIndex.PoseMetadata[PoseIdx]
 #if UE_POSE_SEARCH_TRACE_ENABLED
-				, SearchContext, this
+			, SearchContext, this
 #endif
-			))
+		))
 		{
 			dataInPoseValueArray array_poseValue;
 			dataInQueryArray array_query;
@@ -1129,7 +1153,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	Params.needed_data.Add(float(step));
 	*localFramePtr += 1;
 	if (*localFramePtr == 4) {
-		*localFramePtr -=4;
+		*localFramePtr -= 4;
 	}
 
 
@@ -1137,10 +1161,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	UE_LOG(LogTemp, Warning, TEXT("current local frame is : %lld"), *localFramePtr);
 
 	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr, step);
-	double TimeInSeconds = FPlatformTime::Seconds();
-	/*
-	newAsyncExecution->FrameStartTime.Add(TimeInSeconds);
-
+	
 	if (newAsyncExecution->currFrame >= 20)
 	{
 		newAsyncExecution->currFrame = 0;
@@ -1149,15 +1170,15 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	{
 		newAsyncExecution->currFrame++;
 	}
-	*/
+	
 	//return result;
 }
 
 void UPoseSearchDatabase::OnBroadcastReceived(float Cost, float DatabaseIdx, float PoseIdx)
 {
 	OutputFromBuffer.Add({ Cost, DatabaseIdx, PoseIdx });
-
 }
+
 void UPoseSearchDatabase::BindToSender(UExampleComputeShaderLibrary_AsyncExecution* Sender) const
 {
 	if (Sender)

@@ -27,7 +27,6 @@ struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 	TArray<float> OutPut;
 	TArray<float> needed_data;
 
-
 	/*
 	struct dataOutComputeShader {
 		int32 databaseIndex;
@@ -98,8 +97,6 @@ public:
 	FMyCustomEventDelegate OnBroadcast;
 	bool bIsBoundToSender = false;
 	int32 currFrame = 1;
-	TArray<float> FrameEndTime = {};
-	TArray<float> FrameStartTime = {};
 	TArray<TArray<float>>* outputFromDatabase = nullptr;
 
 	// Execute the actual load
@@ -128,10 +125,13 @@ public:
 					float cost = OutputVal[0];
 					float bestcost = FLT_MAX;
 					CriticalSection->Lock();
-					outputFromDatabase->Empty();
+					if (outputFromDatabase->Num() >= 4)
+					{
+						outputFromDatabase->Pop();
+					}
+					//outputFromDatabase->Empty();
 					bestcost = cost;
 					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
-					//372000
 					for (int i = 3; i < num_pose * 3; i += 3) {
 						if (OutputVal[i] != NULL)
 						{
@@ -143,12 +143,9 @@ public:
 								outputFromDatabase->RemoveAt(0);
 								outputFromDatabase->Add({ cost, OutputVal[i + 1], OutputVal[i + 2] });
 							}
+						
 						}
-						//UE_LOG(LogTemp, Warning, TEXT("current i idx is : %lld"), i);
-						//UE_LOG(LogTemp, Warning, TEXT("current pose idx is : %f"), OutputVal[i + 2]);
 					}
-					//float TimeInSeconds = FPlatformTime::Seconds();
-					//FrameEndTime.Add(TimeInSeconds);
 					CriticalSection->Unlock();
 				}
 			});

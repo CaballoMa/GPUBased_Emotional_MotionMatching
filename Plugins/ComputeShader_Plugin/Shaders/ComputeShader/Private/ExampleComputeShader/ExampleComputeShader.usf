@@ -17,7 +17,8 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     int currNum = DTid.y + 320 * DTid.z;
 
 
-    if(currNum < neededData[1]){
+    if (currNum < neededData[1])
+    {
         int longIndex = currNum * 28;
         float4 overallCost;
         float4 VA, VB, VW, Diff, WeightedDiff;
