@@ -48,7 +48,7 @@ void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext
 		ChannelPtr->BuildQuery(SearchContext, InOutQuery);
 
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));
+	//UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));
 
 	
 }

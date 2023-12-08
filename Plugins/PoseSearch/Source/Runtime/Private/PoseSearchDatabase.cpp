@@ -23,7 +23,7 @@ DEFINE_STAT(STAT_PoseSearch_BruteForce);
 DEFINE_STAT(STAT_PoseSearch_PCAKNN);
 
 #define FRAME_RECORD_LENGTH 20
-#define POSE_SEARCH_GAP 64
+#define POSE_SEARCH_GAP 4
 #define GPU_OPEN 1
 namespace UE::PoseSearch
 {
@@ -1120,7 +1120,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	//float dbIdx = dataBaseIndex;
 	float currframe = newAsyncExecution->currFrame;
 	//==========
-	FExampleComputeShaderDispatchParams Params(1, 16, 16);
+	FExampleComputeShaderDispatchParams Params(1, 6, 6);
 	TArray<float> new_queryValues;
 	new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
@@ -1143,10 +1143,11 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			{
 				weightsSqrt.Add(SearchIndex.WeightsSqrt[i]);
 			}
+			/*
 			if (PoseIdx == start_point) {
 				Params.needed_data.Add(float(PoseValues.Num()));
 			}
-
+			*/
 			Params.A.Append(PoseValues.GetData(), PoseValues.Num());
 
 			Params.weightsSqrt.Append(weightsSqrt.GetData(), weightsSqrt.Num());
@@ -1155,6 +1156,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			Params.arrayLength.Add(new_queryValues.Num());
 		}
 	}
+	Params.needed_data.Add(float(28.0));
 	Params.needed_data.Add(float(step));
 	*localFramePtr += 1;
 	if (*localFramePtr == 16) {
@@ -1163,7 +1165,7 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 
 
 
-	UE_LOG(LogTemp, Warning, TEXT("current local frame is : %lld"), *localFramePtr);
+	//UE_LOG(LogTemp, Warning, TEXT("current local frame is : %lld"), *localFramePtr);
 
 	newAsyncExecution->Execute(Params, LastRenderFence, &CriticalSection, OutputFromBufferPtr, step);
 	
