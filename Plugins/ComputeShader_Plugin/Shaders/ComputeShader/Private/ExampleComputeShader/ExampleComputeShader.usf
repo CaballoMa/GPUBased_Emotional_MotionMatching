@@ -13,11 +13,12 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
     uint GroupIndex : SV_GroupIndex)
 {
     int index = DTid.x;
-    //int currNum = (DTid.y*100+DTid.z);
-    int currNum = DTid.y + 320 * DTid.z;
 
 
-    if (currNum < neededData[1])
+    int currNum = DTid.y + 120 * DTid.z;
+
+
+    if (currNum < neededData[1] + 1 )
     {
         int longIndex = currNum * 28;
         float4 overallCost;

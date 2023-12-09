@@ -37,7 +37,7 @@ void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext
 	{
 		
 		//added Han Wang
-		UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), *ChannelPtr.GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("This is the data: %s"), *ChannelPtr.GetName());
 		if (ChannelPtr.GetName() == "PoseSearchFeatureChannel_Trajectory_0") {
 
 		}
@@ -48,7 +48,7 @@ void UPoseSearchSchema::BuildQuery(UE::PoseSearch::FSearchContext& SearchContext
 		ChannelPtr->BuildQuery(SearchContext, InOutQuery);
 
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));
+	//UE_LOG(LogTemp, Warning, TEXT("Finish one for loop---------------------------------"));
 
 	
 }

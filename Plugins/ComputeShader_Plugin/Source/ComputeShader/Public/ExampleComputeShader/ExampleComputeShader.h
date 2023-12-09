@@ -10,7 +10,7 @@
 
 #define TexWidth 512
 #define TexHeight 512
-#define POSE_SEARCH_GAP 64
+#define POSE_SEARCH_GAP 4
 
 struct COMPUTESHADER_API FExampleComputeShaderDispatchParams
 {
@@ -133,14 +133,14 @@ public:
 					//outputFromDatabase->Empty();
 					bestcost = cost;
 					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
-					for (int i = 3; i < num_pose * 3; i += 3) {
-						if (OutputVal[i] != NULL)
+					for (int i = 3; i < num_pose * 3 - 1; i += 3) {
+ 						if (OutputVal[i] != NULL)
 						{
 							cost = OutputVal[i];
-							if (bestcost > cost)
+							if (bestcost > cost && OutputVal[i + 2] >= 0 && OutputVal[i + 2] < num_pose * POSE_SEARCH_GAP)
 							{
 								bestcost = cost;
-								outputFromDatabase->RemoveAt(0);
+								outputFromDatabase->Pop();
 								outputFromDatabase->Add({ cost, OutputVal[i + 1], OutputVal[i + 2] });
 							}
 						

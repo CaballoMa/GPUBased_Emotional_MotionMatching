@@ -346,7 +346,7 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 
 				index += 1;
 				FSearchResult NewSearchResult = Database->Search(SearchContext, inData, index);
-				FExampleComputeShaderInterface::check_connection();
+				//FExampleComputeShaderInterface::check_connection();
 				
 				if (NewSearchResult.PoseCost.GetTotalCost() < SearchResult.PoseCost.GetTotalCost())
 				{
