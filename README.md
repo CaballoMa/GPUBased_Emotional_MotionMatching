@@ -103,6 +103,10 @@ Instead of using a for loop to iter through the poses to compute the error(cost)
 ![Unlock FPS](images/gpu_100_2.png)
 
 
+Based on the above analysis, it is easy to see that GPU performance is better than the traditional CPU way. There is one thing we need to mention, the frame rate and function time cost might change a lot corresponding to the time condition. It might not be precise, but we tried to pick up the average condition.  Firstly, in the one character's case, it seems that there is no difference between the CPU case and GPU case. It is because the time consumed is so low, that our insight tool might not be able to give really precise results. In our opinion, the GPU option might have a faster speed though we cannot actually see it.
+
+The difference becomes large when we run 10-character motion matching conditions. The CPU performance shows a large drop-down. It is because though the UE engine uses a multi-thread method to speed up the different character's tasks, the task thread amount is limited. There are also CPU working rules that force the current game thread to wait until everything is finished. However, our GPU motion-matching workflow is different. The only thing we need to do is dispatch the task to the GPU and then continue the game thread without waiting for the GPU's response. Our work shows 400%
+
 
 ### The optimization we've done
 
@@ -119,8 +123,9 @@ Instead of using a for loop to iter through the poses to compute the error(cost)
 
 #### 5. Time dimension denoize
 
-#### 6. Database building support
 
+## Other than performance optimization 
+### Database building support
 
 
 
