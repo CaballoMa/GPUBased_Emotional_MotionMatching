@@ -42,7 +42,7 @@ Traditional Motion matching is CPU-based, and usually only runs on the main char
 just run your character
 
 #### 7. Other: database importer
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer2.png" width="700" height="400">
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer2.png" width="800" height="400">
 
 
 ## Working Flow
