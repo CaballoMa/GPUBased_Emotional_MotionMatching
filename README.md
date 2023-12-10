@@ -48,9 +48,9 @@ just run your character
 
 2. As shown in the graph, click on the skeleton and add it to the plugin.
    
-3. select the animation files& output folder in the selection window.
+3. Select the animation files& output folder in the selection window.
  
-4. Click link start.
+4. Click "link start" and get the retargeted animations.
 
 
 ## Working Flow
