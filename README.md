@@ -70,8 +70,38 @@ Instead of using a for loop to iter through the poses to compute the error(cost)
 
 ### 1. CPU PERFORMANCE
 
+#### 1 character
+![Unlock FPS](images/cpu_1_1.png)
+![Unlock FPS](images/cpu_1_2.png)
+
+#### 10 characters
+
+![Unlock FPS](images/cpu_10_1.png)
+![Unlock FPS](images/cpu_10_2.png)
+
+#### 100 characters
+
+![Unlock FPS](images/cpu_100_1.png)
+![Unlock FPS](images/cpu_100_2.png)
+
+
 
 ### 2. GPU PERFORMANCE
+
+#### 1 character
+![Unlock FPS](images/gpu_1_1.png)
+![Unlock FPS](images/gpu_1_2.png)
+
+#### 10 characters
+
+![Unlock FPS](images/gpu_10_1.png)
+![Unlock FPS](images/gpu_10_2.png)
+
+#### 100 characters
+
+![Unlock FPS](images/gpu_100_1.png)
+![Unlock FPS](images/gpu_100_2.png)
+
 
 
 ### The optimization we've done
