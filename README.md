@@ -26,7 +26,7 @@ Traditional Motion matching is CPU-based, and usually only runs on the main char
 ## How To Use
 
 #### 1. Download the /plugin file in this repository
-#### 2. Drag it in to yourproject/plugin
+#### 2. Drag it into your project/plugin
 #### 3. Build the motion matching database(can also buy from UE marketplace)
 <img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/BuildDatabase.png" width="400" height="250">
 
@@ -48,10 +48,10 @@ just run your character
 
 <img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow1.png" width="800" height="500">
 
-Delving into our operational methodology, our primary objective lies in the transformation of the CPU-based linear motion matching calculation process into a more efficient and scalable counterpart leveraging GPUs.  This strategic evolution is grounded in the recognition that concurrently calculating multiple instances of the motion matching process on a CPU follows a linear trajectory, resulting in a proportional increase in calculation speed due to the sequential nature of motion-matching data computation.  
+Delving into our operational methodology, our primary objective lies in the transformation of the CPU-based linear motion-matching calculation process into a more efficient and scalable counterpart leveraging GPUs.  This strategic evolution is grounded in the recognition that concurrently calculating multiple instances of the motion-matching process on a CPU follows a linear trajectory, resulting in a proportional increase in calculation speed due to the sequential nature of motion-matching data computation.  
 
 
-This inherent limitation is circumvented by migrating the computational workload to GPUs, where the parallel processing architecture enables the simultaneous execution of diverse motion matching processes.  This concurrent computation not only mitigates the linear increase in processing time but also substantially decreases it, rendering the overall processing time conducive to achieving real-time performance.  
+This inherent limitation is circumvented by migrating the computational workload to GPUs, where the parallel processing architecture enables the simultaneous execution of diverse motion-matching processes.  This concurrent computation mitigates the linear increase in processing time and substantially decreases it, rendering the overall processing time conducive to achieving real-time performance.  
 
 
 The adoption of GPU parallelism emerges as a pivotal enhancement, ensuring not only computational efficiency but also the seamless execution of multi-motion matching operations, thereby contributing to the creation of responsive and dynamic interactive environments.
@@ -63,22 +63,37 @@ Our approach is based on UE5.3, an experimental motion matching. Based on the id
 
 Instead of using a for loop to iter through the poses to compute the error(cost), we collected the data and then used float buffers to transfer the data in and out of the GPU. Also, the game thread will not wait for the render thread to finish the calculation, it will use the data from the previous 3 frames to decide which pose will be played. After the GPU side finishes the calculation, we will store the data used for future motion matching. This process will be parallel to the main game thread and won't affect the current frame rate.
 
-## Optimization Process
-
-
-### 1. CPU - GPU
-
-### 2. Compute Shader calculation method
-
-### 3. Waiting current frame - using previous frame
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="400">
-
-
 
 
 ## Performance Analysis
 
-Still working on it.
+
+### 1. CPU PERFORMANCE
+
+
+### 2. GPU PERFORMANCE
+
+
+### The optimization we've done
+
+#### 1. Compute shader
+
+#### 1. Compute shader data organization
+
+####  2. Waiting current frame - using the previous frame
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="400">
+
+#### 3. Database upgrade
+
+#### 4. Further frame prediction
+
+#### 5. Time dimension denoize
+
+#### 6. Database building support
+
+
+
+
 
 ## Reference
 
