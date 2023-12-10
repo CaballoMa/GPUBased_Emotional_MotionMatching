@@ -131,7 +131,7 @@ People might feel that the compute shader improvement might seem lower than expe
 
 ### Database building support
 
-![Unlock FPS](images/importer.png)
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer.png" width="250" height="400">
 
 Since we need to have different databases for our characters, a big problem shows up: we don't have this much animation data. Additionally, most of the data we get can not fit our skeleton. Thus, we need to use MAYA human IK to retarget them. However, there are hundreds of animation data for each database, it is even impossible to manually retarget the animation. Thus, we wrote a Maya plugin to solve this large-scale retarget problem. The way to use it was written in the above how-to-use part.
 
