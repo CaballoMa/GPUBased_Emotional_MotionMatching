@@ -44,8 +44,11 @@ just run your character
 #### 7. Other: database importer
 <img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer2.png" width="800" height="400">
 1. drag the Python file from the retarget_helper file to Maya main window. You'll see the plugin pop up. Build the Human IK for both skeletons.
+
 2. As shown in the graph, click on the skeleton and add it to the plugin.
+   
 3. select the animation files& output folder in the selection window.
+ 
 4. Click lin start.
 
 
