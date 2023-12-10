@@ -52,35 +52,35 @@ public:
 	static void DispatchRenderThread(
 		FRHICommandListImmediate& RHICmdList,
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
+		FRenderCommandFence RenderFence, FCriticalSection* CriticalSection,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	);
 
 	// Executes this shader on the render thread from the game thread via EnqueueRenderThreadCommand
 	static void DispatchGameThread(
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
+		FRenderCommandFence RenderFence, FCriticalSection* CriticalSection,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	)
 	{
 		ENQUEUE_RENDER_COMMAND(SceneDrawCompletion)(
-		[Params, RenderFence,AsyncCallback](FRHICommandListImmediate& RHICmdList)
+		[Params, RenderFence, CriticalSection,AsyncCallback](FRHICommandListImmediate& RHICmdList)
 		{
-			DispatchRenderThread(RHICmdList, Params, RenderFence,AsyncCallback);
+			DispatchRenderThread(RHICmdList, Params, RenderFence, CriticalSection,AsyncCallback);
 		});
 	}
 
 	// Dispatches this shader. Can be called from any thread
 	static void Dispatch(
 		FExampleComputeShaderDispatchParams Params,
-		FRenderCommandFence RenderFence,
+		FRenderCommandFence RenderFence, FCriticalSection* CriticalSection,
 		TFunction<void(float* OutputVal)> AsyncCallback
 	)
 	{
 		if (IsInRenderingThread()) {
-			DispatchRenderThread(GetImmediateCommandList_ForRenderCommand(), Params, RenderFence,AsyncCallback);
+			DispatchRenderThread(GetImmediateCommandList_ForRenderCommand(), Params, RenderFence, CriticalSection, AsyncCallback);
 		}else{
-			DispatchGameThread(Params,RenderFence,AsyncCallback);
+			DispatchGameThread(Params,RenderFence, CriticalSection,AsyncCallback);
 		}
 	}
 
@@ -119,7 +119,7 @@ public:
 			outputFromDatabase = outputBuffer;
 		}
 
-		FExampleComputeShaderInterface::Dispatch(Params, RenderFence, [this, Params, CriticalSection, num_pose](float* OutputVal)
+		FExampleComputeShaderInterface::Dispatch(Params, RenderFence, CriticalSection, [this, Params, CriticalSection, num_pose](float* OutputVal)
 			{
 				if (outputFromDatabase != nullptr)
 				{
@@ -134,7 +134,7 @@ public:
 					bestcost = cost;
 					outputFromDatabase->Add({ cost, OutputVal[1], OutputVal[2] });
 					for (int i = 3; i < num_pose * 3 - 1; i += 3) {
- 						if (OutputVal[i] != NULL)
+						if (OutputVal[i] != NULL)
 						{
 							cost = OutputVal[i];
 							if (bestcost > cost && OutputVal[i + 2] >= 0 && OutputVal[i + 2] < num_pose * POSE_SEARCH_GAP)

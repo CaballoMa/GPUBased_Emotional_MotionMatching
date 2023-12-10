@@ -102,7 +102,7 @@ private:
 //                            ShaderType                            ShaderPath                     Shader function name    Type
 IMPLEMENT_GLOBAL_SHADER(FExampleComputeShader, "/ComputeShaderShaders/ExampleComputeShader/ExampleComputeShader.usf", "ExampleComputeShader", SF_Compute);
 
-void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, TFunction<void(float* OutputVal)> AsyncCallback) {
+void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, FExampleComputeShaderDispatchParams Params, FRenderCommandFence RenderFence, FCriticalSection* CriticalSection, TFunction<void(float* OutputVal)> AsyncCallback) {
 	FRDGBuilder GraphBuilder(RHICmdList);
 
 	{
@@ -182,9 +182,8 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 			FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("ExecuteExampleComputeShaderOutput"));
 			AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
 
-			auto RunnerFunc = [GPUBufferReadback, poseNum, AsyncCallback](auto&& RunnerFunc) -> void {
+			auto RunnerFunc = [GPUBufferReadback, poseNum, CriticalSection, AsyncCallback](auto&& RunnerFunc) -> void {
 				if (GPUBufferReadback->IsReady()) {
-
 					float* Buffer = (float*)GPUBufferReadback->Lock(poseNum * 3 * sizeof(float));
 					float* OutVal = Buffer;
 					GPUBufferReadback->Unlock();
@@ -192,7 +191,6 @@ void FExampleComputeShaderInterface::DispatchRenderThread(FRHICommandListImmedia
 					AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal]() {
 						AsyncCallback(OutVal);
 						});
-
 					delete GPUBufferReadback;
 				}
 				else {

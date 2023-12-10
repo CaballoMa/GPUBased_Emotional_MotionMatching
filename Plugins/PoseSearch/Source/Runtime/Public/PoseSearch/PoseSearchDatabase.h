@@ -271,7 +271,9 @@ public:
 
 	int localFrame = 0;
 	int* localFramePtr = &localFrame;
-
+	mutable int DatabaseSwitchCount = 50;
+	mutable bool ChooseTheDatabase = false;
+	mutable int SkipTime = 0;
 	mutable FCriticalSection CriticalSection;
 	mutable FExampleComputeShaderDispatchParams* ParamPtr = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Preview")

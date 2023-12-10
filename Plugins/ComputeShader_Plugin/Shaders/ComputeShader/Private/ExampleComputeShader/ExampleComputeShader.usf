@@ -24,7 +24,8 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
         float4 overallCost;
         float4 VA, VB, VW, Diff, WeightedDiff;
         float PartialCost;
-    
+        float4 ones = float4(1.0, 1.0, 1.0, 1.0);
+        
         for (int q = 0; q < 7; q++)
         {
             VA = float4(A[longIndex + q * 4], A[longIndex + q * 4 + 1], A[longIndex + q * 4 + 2], A[longIndex + q * 4 + 3]);
@@ -35,7 +36,7 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
             WeightedDiff = Diff * VW;
             PartialCost = dot(WeightedDiff, WeightedDiff);
 
-            overallCost += dot(PartialCost, float4(1, 1, 1, 1));
+            overallCost += dot(PartialCost, ones);
         }
         PartialCosts[currNum * 3] = overallCost;
         

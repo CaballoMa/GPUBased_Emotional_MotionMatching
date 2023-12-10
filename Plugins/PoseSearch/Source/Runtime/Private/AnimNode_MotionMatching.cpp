@@ -122,10 +122,10 @@ void FAnimNode_MotionMatching::UpdateAssetPlayer(const FAnimationUpdateContext& 
 	UpdateCounter.SynchronizeWith(Context.AnimInstanceProxy->GetUpdateCounter());
 
 	// If the Database property hasn't been overridden, set it as the only database to search.
-	if (!bOverrideDatabaseInput && Database)
+	if (!bOverrideDatabaseInput && !Database.IsEmpty())
 	{
-		DatabasesToSearch.Reset(1);
-		DatabasesToSearch.Add(Database);
+		DatabasesToSearch.Reset(Database.Num());
+		DatabasesToSearch.Append(Database);
 	}
 
 #if ENABLE_ANIM_DEBUG
@@ -146,6 +146,7 @@ void FAnimNode_MotionMatching::UpdateAssetPlayer(const FAnimationUpdateContext& 
 	UPoseSearchLibrary::UpdateMotionMatchingState(
 		Context,
 		DatabasesToSearch,
+		DatabasesToSearch2,
 		Trajectory,
 		TrajectorySpeedMultiplier,
 		BlendTime,

@@ -53,7 +53,7 @@ private:
 
 	// The database to search. This can be overridden by Anim Node Functions such as "On Become Relevant" and "On Update" via SetDatabaseToSearch/SetDatabasesToSearch.
 	UPROPERTY(EditAnywhere, Category = Settings, meta = (PinShownByDefault))
-	TObjectPtr<const UPoseSearchDatabase> Database = nullptr;
+	TArray<TObjectPtr<const UPoseSearchDatabase>> Database = {};
 
 	// Motion Trajectory samples for pose search queries in Motion Matching.These are expected to be in the space of the SkeletalMeshComponent.This is provided with the CharacterMovementTrajectory Component output.
 	UPROPERTY(EditAnywhere, Category = Settings, meta = (PinShownByDefault))
@@ -125,6 +125,9 @@ private:
 	// List of databases this node is searching.
 	UPROPERTY()
 	TArray<TObjectPtr<const UPoseSearchDatabase>> DatabasesToSearch;
+
+	UPROPERTY()
+	TArray<TObjectPtr<const UPoseSearchDatabase>> DatabasesToSearch2;
 
 	// Ignore the continuing pose on the next update and use the best result from DatabasesToSearch. This is set back to false after each update.
 	bool bForceInterruptNextUpdate = false;

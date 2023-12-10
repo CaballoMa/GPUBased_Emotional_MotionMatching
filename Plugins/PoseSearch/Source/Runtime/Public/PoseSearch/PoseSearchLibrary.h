@@ -174,6 +174,7 @@ public:
 	static void UpdateMotionMatchingState(
 		const FAnimationUpdateContext& Context,
 		const TArray<TObjectPtr<const UPoseSearchDatabase>>& Databases,
+		const TArray<TObjectPtr<const UPoseSearchDatabase>>& Databases2,
 		const FPoseSearchQueryTrajectory& Trajectory,
 		float TrajectorySpeedMultiplier,
 		float BlendTime,
@@ -213,6 +214,7 @@ public:
 	static void MotionMatch(
 		UAnimInstance* AnimInstance,
 		const UPoseSearchDatabase* Database,
+		const UPoseSearchDatabase* Database2,
 		const FPoseSearchQueryTrajectory Trajectory,
 		float TrajectorySpeedMultiplier,
 		const FName PoseHistoryName,

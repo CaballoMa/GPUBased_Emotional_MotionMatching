@@ -24,6 +24,7 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PoseSearchLibrary)
 
 #define LOCTEXT_NAMESPACE "PoseSearchLibrary"
+#define GPU_OPEN 0
 #define SIMPLE_NUM_PER_SEC 5
 #define SIMPLE_TIME 1.5
 
@@ -275,6 +276,7 @@ void UPoseSearchLibrary::TraceMotionMatchingState(
 void UPoseSearchLibrary::UpdateMotionMatchingState(
 	const FAnimationUpdateContext& Context,
 	const TArray<TObjectPtr<const UPoseSearchDatabase>>& Databases,
+	const TArray<TObjectPtr<const UPoseSearchDatabase>>& Databases2,
 	const FPoseSearchQueryTrajectory& Trajectory,
 	float TrajectorySpeedMultiplier,
 	float BlendTime,
@@ -343,8 +345,40 @@ void UPoseSearchLibrary::UpdateMotionMatchingState(
 		{
 			if (ensure(Database))
 			{
-
 				index += 1;
+#if !GPU_OPEN
+				if (Databases.Num() > 1)
+				{
+					if (!Database->ChooseTheDatabase)
+					{
+						Database->ChooseTheDatabase = ((int)rand()) % 2 == 1 ? true : false;
+					}
+
+					if (!Database->ChooseTheDatabase)
+					{
+						if (Database->SkipTime >= 2)
+						{
+							Database->ChooseTheDatabase = true;
+							Database->SkipTime = 0;
+						}
+						else
+						{
+							Database->SkipTime++;
+							continue;
+						}
+					}
+					Database->SkipTime = 0;
+					Database->DatabaseSwitchCount--;
+					if (Database->DatabaseSwitchCount <= 0)
+					{
+						Database->ChooseTheDatabase = false;
+						Database->DatabaseSwitchCount = 50;
+						continue;
+					}
+				}
+#else 
+				if (index > 1) { break; }
+#endif
 				FSearchResult NewSearchResult = Database->Search(SearchContext, inData, index);
 				//FExampleComputeShaderInterface::check_connection();
 				
@@ -462,6 +496,7 @@ FPoseSearchQueryTrajectory UPoseSearchLibrary::ProcessTrajectory(const FPoseSear
 void UPoseSearchLibrary::MotionMatch(
 	UAnimInstance* AnimInstance,
 	const UPoseSearchDatabase* Database,
+	const UPoseSearchDatabase* Database2,
 	const FPoseSearchQueryTrajectory Trajectory,
 	float TrajectorySpeedMultiplier,
 	const FName PoseHistoryName,
