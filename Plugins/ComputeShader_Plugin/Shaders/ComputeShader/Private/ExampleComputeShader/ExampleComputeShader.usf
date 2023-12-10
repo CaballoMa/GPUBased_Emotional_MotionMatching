@@ -29,7 +29,7 @@ void ExampleComputeShader(uint3 DTid : SV_DispatchThreadID,
         {
             VA = float4(A[longIndex + q * 4], A[longIndex + q * 4 + 1], A[longIndex + q * 4 + 2], A[longIndex + q * 4 + 3]);
             VB = float4(B[index + q * 4], B[index + q * 4 + 1], B[index + q * 4 + 2], B[index + q * 4 + 3]);
-            VW = float4(WeightsSqrt[longIndex + q * 4], WeightsSqrt[longIndex + q * 4 + 1], WeightsSqrt[longIndex + q * 4 + 2], WeightsSqrt[longIndex + q * 4 + 3]);
+            VW = float4(WeightsSqrt[index + q * 4], WeightsSqrt[index + q * 4 + 1], WeightsSqrt[index + q * 4 + 2], WeightsSqrt[index + q * 4 + 3]);
 
             Diff = VA - VB;
             WeightedDiff = Diff * VW;

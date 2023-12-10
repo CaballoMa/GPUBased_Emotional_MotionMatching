@@ -1127,6 +1127,14 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 	new_queryValues.Append(QueryValues.GetData(), QueryValues.Num());
 
 	Params.B = new_queryValues;
+
+	TArray<float> weightsSqrt;
+	for (int i = 0; i < SearchIndex.WeightsSqrt.Num(); i++)
+	{
+		Params.weightsSqrt.Add(SearchIndex.WeightsSqrt[i]);
+	}
+	//Params.weightsSqrt.Append(weightsSqrt.GetData(), weightsSqrt.Num());
+
 	TConstArrayView<float> PoseValues;
 	for (int32 PoseIdx = start_point; PoseIdx < current_pose_max - 1; PoseIdx += POSE_SEARCH_GAP)
 	{
@@ -1140,18 +1148,14 @@ void UPoseSearchDatabase::collectingComputeShaderContext(UE::PoseSearch::FSearch
 			dataInPoseValueArray array_poseValue;
 			dataInQueryArray array_query;
 
-			TArray<float> weightsSqrt;
-			for (int i = 0; i < SearchIndex.WeightsSqrt.Num(); i++)
-			{
-				weightsSqrt.Add(SearchIndex.WeightsSqrt[i]);
-			}
+			
 			if (PoseIdx == start_point) {
 				Params.needed_data.Add(float(PoseValues.Num()));
 			}
 
 			Params.A.Append(PoseValues.GetData(), PoseValues.Num());
 
-			Params.weightsSqrt.Append(weightsSqrt.GetData(), weightsSqrt.Num());
+			
 			Params.dataBaseIdx.Add(currframe);
 			Params.poseIdx.Add(PoseIdx);
 			Params.arrayLength.Add(new_queryValues.Num());
