@@ -4,6 +4,9 @@
 
 ![](results/g100.gif)
 
+### Presentation
+
+[GPU-based NPCs’ Motion Matching with Personalized Animation](https://docs.google.com/presentation/d/1bqu9WO6MdaSDJUJ0BupnrZNoLDoQ_u2QffSNNol0kBY/edit?usp=sharing)
 
 ## Motion Matching Introduction
 
