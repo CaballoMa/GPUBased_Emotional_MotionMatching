@@ -1,18 +1,8 @@
 # GPUBased_Emotional_MotionMatching
 
-## Milestone Slides
- [Milestone1 Slide](https://docs.google.com/presentation/d/1ReOL6aRipmgVvq1oI5TzAEBSmwE4okE5VBqne8QOwO0/edit?usp=sharing)
- 
- [Milestone2 Slide](https://docs.google.com/presentation/d/10Vmtje1TYG2by99pjaSxHmJE1uDU_mSqM6aJXk8oVE4/edit?usp=sharing)
- 
- [Milestone3 Slide](https://docs.google.com/presentation/d/1LE8DsNWHqecslTkHEJP5CkqP78D5CWmJ1i31S9SzzZw/edit?usp=sharing)
+## Overview Output
 
-
-## Overview Output Video
-
-
-https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/assets/112833135/c4f82d19-fcff-48bb-b192-62bb7926bc35
-
+![](results/g100.gif)
 
 
 ## Motion Matching Introduction
@@ -21,7 +11,11 @@ Motion matching is a data-driven animation technique used predominantly in video
 
 Traditional Motion matching is CPU-based, and usually only runs on the main character. Our approach uses a GPU-based method to speed up the process and make it more suitable for multi-character motion-matching conditions.
 
-![Unlock FPS](images/titlegif.gif)
+![Unlock FPS](results/personized.gif)
+
+## UE5.3 Motion Matching Process Framework
+
+![](results/frameworkUE.png);
 
 ## How To Use
 
@@ -72,25 +66,33 @@ Our approach is based on UE5.3, an experimental motion matching. Based on the id
 
 Instead of using a for loop to iter through the poses to compute the error(cost), we collected the data and then used float buffers to transfer the data in and out of the GPU. Also, the game thread will not wait for the render thread to finish the calculation, it will use the data from the previous 3 frames to decide which pose will be played. After the GPU side finishes the calculation, we will store the data used for future motion matching. This process will be parallel to the main game thread and won't affect the current frame rate.
 
-
-
 ## Performance Analysis
 
 
 ### 1. CPU PERFORMANCE
 
 #### 1 character
+
+![](results/c1.gif)
+
 ![Unlock FPS](images/cpu_1_1.png)
+
 ![Unlock FPS](images/cpu_1_2.png)
 
 #### 10 characters
 
+![](results/c10.gif)
+
 ![Unlock FPS](images/cpu_10_1.png)
+
 ![Unlock FPS](images/cpu_10_2.png)
 
 #### 100 characters
 
+![](results/c100.gif)
+
 ![Unlock FPS](images/cpu_100_1.png)
+
 ![Unlock FPS](images/cpu_100_2.png)
 
 
@@ -98,17 +100,27 @@ Instead of using a for loop to iter through the poses to compute the error(cost)
 ### 2. GPU PERFORMANCE
 
 #### 1 character
+
+![](results/g1.gif)
+
 ![Unlock FPS](images/gpu_1_1.png)
+
 ![Unlock FPS](images/gpu_1_2.png)
 
 #### 10 characters
 
+![](results/g10.gif)
+
 ![Unlock FPS](images/gpu_10_1.png)
+
 ![Unlock FPS](images/gpu_10_2.png)
 
 #### 100 characters
 
+![](results/g100.gif)
+
 ![Unlock FPS](images/gpu_100_1.png)
+
 ![Unlock FPS](images/gpu_100_2.png)
 
 
@@ -117,6 +129,7 @@ Based on the above analysis, it is easy to see that GPU performance is better th
 The difference becomes large when we run 10-character motion matching conditions. The CPU performance shows a large drop-down. It is because though the UE engine uses a multi-thread method to speed up the different character's tasks, the task thread amount is limited. There are also CPU working rules that force the current game thread to wait until everything is finished. However, our GPU motion-matching workflow is different. The only thing we need to do is dispatch the task to the GPU and then continue the game thread without waiting for the GPU's response. Our work shows a 50% increase in calculation speed in 10-character cases and even more in 100-character cases. The user can feel a great improvement in frame rate while using our motion-matching method when a large number of characters use motion-matching.
 
 People might feel that the compute shader improvement might seem lower than expected. This is because the parallel calculation is rather easy compared to the lots of rendering tasks. There aren't lots of matrix calculations like rendering. Thus, the time of sending the data to GPU and returning them might balance the time we saved in parallel calculation. Our group noticed this and used lots of methods to make our work show an obvious improvement in running large-scale characters. 
+
 
 
 ### The optimization we've done
@@ -132,8 +145,15 @@ People might feel that the compute shader improvement might seem lower than expe
 
 #### 4. Further frame prediction
 
+If we don't wait for the cpu it will cause the gpu's Output to lag behind the animation of the current frame, so it needs to be calculated from data sampled in the future to reduce the lag error.
+
+![](results/predict.png)
+
 #### 5. Time dimension denoize
 
+Also, to reduce dispatch stress, we distribute each dispatch into four buffer and apply prediction on each of them.
+
+![](results/4buffer.png)
 
 ## Other than performance optimization 
 
