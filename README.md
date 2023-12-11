@@ -164,7 +164,7 @@ Also, to reduce dispatch stress, we distribute each dispatch into four buffer an
 
 ![](results/4buffer.png)
 
-##### Result for prediction denoize
+#### Result for prediction denoize
 
 ![](results/predictcompare.gif)
 
