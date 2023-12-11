@@ -11,7 +11,7 @@ Motion matching is a data-driven animation technique used predominantly in video
 
 Traditional Motion matching is CPU-based, and usually only runs on the main character. Our approach uses a GPU-based method to speed up the process and make it more suitable for multi-character motion-matching conditions.
 
-![Unlock FPS](results/personized.gif)
+![Unlock FPS](results/nopersonized.gif)
 
 ## UE5.3 Motion Matching Process Framework
 
@@ -143,6 +143,15 @@ People might feel that the compute shader improvement might seem lower than expe
 
 #### 3. Database upgrade
 
+Personalized NPC requires diff animation database to select based on current state.
+(Our original intention was to choose different emotional animations, but because Motionmatching requires motion capture data and online resources are limited, we temporarily verified our implementation with three types of motion libraries.)
+
+![](results/3databases.gif)
+
+Then we implemented the process that character can choose diff database to search based on their current state.
+
+![](results/personized.gif)
+
 #### 4. Further frame prediction
 
 If we don't wait for the cpu it will cause the gpu's Output to lag behind the animation of the current frame, so it needs to be calculated from data sampled in the future to reduce the lag error.
@@ -154,6 +163,12 @@ If we don't wait for the cpu it will cause the gpu's Output to lag behind the an
 Also, to reduce dispatch stress, we distribute each dispatch into four buffer and apply prediction on each of them.
 
 ![](results/4buffer.png)
+
+##### Result for prediction denoize
+
+![](results/predictcompare.gif)
+
+As you can see, the character animation without predicting is inconsistent, and you can see that the character's footsteps repeat and cross over. The right one with prediction implement works fine.
 
 ## Other than performance optimization 
 
