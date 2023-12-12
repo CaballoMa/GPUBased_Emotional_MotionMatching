@@ -61,8 +61,6 @@ This inherent limitation is circumvented by migrating the computational workload
 
 The adoption of GPU parallelism emerges as a pivotal enhancement, ensuring not only computational efficiency but also the seamless execution of multi-motion matching operations, thereby contributing to the creation of responsive and dynamic interactive environments.
 
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow1.png" width="800" height="460">
-
 The red box is the part we optimize with GPU compute shader, we put the database data and trajectory data into the buffer to the gpu, and compare the compute shader result in the cpu to get the best pose.
 
 <img src="gpupart.png" width="800" height="460">
