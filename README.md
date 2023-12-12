@@ -10,15 +10,13 @@
 
 ## Motion Matching Introduction
 
-Motion matching is a data-driven animation technique used predominantly in video games and virtual reality to achieve lifelike character movements. Departing from traditional handcrafted animations, motion matching relies on a vast database of motion capture data. In real-time, the system queries and selects relevant motion data based on the current state and user input, seamlessly blending and adapting animations for a more realistic and dynamic appearance. This approach enhances adaptability to environmental changes, reduces repetitiveness, and contributes to a more immersive and engaging user experience by creating responsive and authentic character animations.
+Motion matching is a data-driven animation technique used predominantly in video games and virtual reality to achieve fluent and vivid character movements. Departing from traditional handcrafted animations, motion matching relies on a vast database of motion capture data. In real-time, the system queries and selects relevant motion data based on the current state and user input, seamlessly blending and adapting animations for a more realistic and dynamic appearance. This approach enhances adaptability to environmental changes, reduces repetitiveness, and contributes to a more immersive and engaging user experience by creating responsive and authentic character animations.
 
 Traditional Motion matching is CPU-based, and usually only runs on the main character. Our approach uses a GPU-based method to speed up the process and make it more suitable for multi-character motion-matching conditions.
 
+Also, traditional Motionmatching is just to make the character animation look more fluent, but we think that pose match can be used to do personalized animation, that is, a character can choose different types of animation according to the current state, which can make the NPCs in our game more vivid and interesting.
+
 ![Unlock FPS](results/nopersonized.gif)
-
-## UE5.3 Motion Matching Process Framework
-
-![](results/frameworkUE.png);
 
 ## How To Use
 
@@ -49,10 +47,11 @@ just run your character
  
 4. Click "link start" and get the retargeted animations.
 
+## UE5.3 Motion Matching Process Framework
 
-## Working Flow
+![](results/frameworkUE.png);
 
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow1.png" width="800" height="500">
+## Our Working Flow
 
 Delving into our operational methodology, our primary objective lies in the transformation of the CPU-based linear motion-matching calculation process into a more efficient and scalable counterpart leveraging GPUs.  This strategic evolution is grounded in the recognition that concurrently calculating multiple instances of the motion-matching process on a CPU follows a linear trajectory, resulting in a proportional increase in calculation speed due to the sequential nature of motion-matching data computation.  
 
@@ -62,12 +61,51 @@ This inherent limitation is circumvented by migrating the computational workload
 
 The adoption of GPU parallelism emerges as a pivotal enhancement, ensuring not only computational efficiency but also the seamless execution of multi-motion matching operations, thereby contributing to the creation of responsive and dynamic interactive environments.
 
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow2.png" width="800" height="500">
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow1.png" width="800" height="460">
 
-Our approach is based on UE5.3, an experimental motion matching. Based on the idea of the source code and the paper, we built a plugin that created a custom node. As shown in the graph, we implemented the GPU-based parallel calculation mainly using the compute shader. 
+The red box is the part we optimize with GPU compute shader, we put the database data and trajectory data into the buffer to the gpu, and compare the compute shader result in the cpu to get the best pose.
 
+<img src="gpupart.png" width="800" height="460">
 
-Instead of using a for loop to iter through the poses to compute the error(cost), we collected the data and then used float buffers to transfer the data in and out of the GPU. Also, the game thread will not wait for the render thread to finish the calculation, it will use the data from the previous 3 frames to decide which pose will be played. After the GPU side finishes the calculation, we will store the data used for future motion matching. This process will be parallel to the main game thread and won't affect the current frame rate.
+we put the database data and trajectory data into the buffer to the gpu, and compare the compute shader result in the cpu to get the best pose.
+
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow1.png" width="800" height="500">
+
+## Obstruction
+
+Because the render thread of UE operates after the game thread, our initial practice is that the cpu of the next frame waits to get the result from the gpu and then performs the computation, which has two problems: 
+
+1. One is that the waiting time is longer than the original computation time on the cpu.
+
+2. The other is that the dispatch data is too much at one time, and the data transfer between the cpu and the gpu is time-consuming. 
+
+### The further optimization
+
+#### Further frame prediction
+
+If we don't wait for the cpu it will cause the gpu's Output to lag behind the animation of the current frame, so it needs to be calculated from data sampled in the future to reduce the lag error.
+
+![](results/predict.png)
+
+**Original Solution:** 
+
+![](ori.png)
+
+**Current Solution:**
+
+![](cur.png)
+
+#### 5. Time dimension denoize
+
+Also, to reduce dispatch stress, we distribute each dispatch into four buffer and apply prediction on each of them.
+
+![](results/4buffer.png)
+
+**Result for prediction denoize: **
+
+![](results/predictcompare.gif)
+
+As you can see, the character animation without predicting is inconsistent, and you can see that the character's footsteps repeat and cross over. The right one with prediction implement works fine.
 
 ## Performance Analysis
 
@@ -133,18 +171,15 @@ The difference becomes large when we run 10-character motion matching conditions
 
 People might feel that the compute shader improvement might seem lower than expected. This is because the parallel calculation is rather easy compared to the lots of rendering tasks. There aren't lots of matrix calculations like rendering. Thus, the time of sending the data to GPU and returning them might balance the time we saved in parallel calculation. Our group noticed this and used lots of methods to make our work show an obvious improvement in running large-scale characters. 
 
+## Other than performance optimization 
 
+### Database building support
 
-### The optimization we've done
+<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer.png" width="250" height="400">
 
-#### 1. Compute shader data organization
+Since we need to have different databases for our characters, a big problem shows up: we don't have this much animation data. Additionally, most of the data we get can not fit our skeleton. Thus, we need to use MAYA human IK to retarget them. However, there are hundreds of animation data for each database, it is even impossible to manually retarget the animation. Thus, we wrote a Maya plugin to solve this large-scale retarget problem. The way to use it was written in the above how-to-use part.
 
-we put the database data and trajectory data into the buffer to the gpu, and compare the compute shader result in the cpu to get the best pose.
-
-####  2. Waiting current frame - using the previous frame
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="400">
-
-#### 3. Database upgrade
+### Multi-Database Selection
 
 Personalized NPC requires diff animation database to select based on current state.
 (Our original intention was to choose different emotional animations, but because Motionmatching requires motion capture data and online resources are limited, we temporarily verified our implementation with three types of motion libraries.)
@@ -154,34 +189,6 @@ Personalized NPC requires diff animation database to select based on current sta
 Then we implemented the process that character can choose diff database to search based on their current state.
 
 ![](results/personized.gif)
-
-#### 4. Further frame prediction
-
-If we don't wait for the cpu it will cause the gpu's Output to lag behind the animation of the current frame, so it needs to be calculated from data sampled in the future to reduce the lag error.
-
-![](results/predict.png)
-
-#### 5. Time dimension denoize
-
-Also, to reduce dispatch stress, we distribute each dispatch into four buffer and apply prediction on each of them.
-
-![](results/4buffer.png)
-
-#### Result for prediction denoize
-
-![](results/predictcompare.gif)
-
-As you can see, the character animation without predicting is inconsistent, and you can see that the character's footsteps repeat and cross over. The right one with prediction implement works fine.
-
-## Other than performance optimization 
-
-### Database building support
-
-<img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/importer.png" width="250" height="400">
-
-Since we need to have different databases for our characters, a big problem shows up: we don't have this much animation data. Additionally, most of the data we get can not fit our skeleton. Thus, we need to use MAYA human IK to retarget them. However, there are hundreds of animation data for each database, it is even impossible to manually retarget the animation. Thus, we wrote a Maya plugin to solve this large-scale retarget problem. The way to use it was written in the above how-to-use part.
-
-
 
 ## Reference
 
