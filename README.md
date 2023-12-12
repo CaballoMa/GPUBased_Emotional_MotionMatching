@@ -137,9 +137,9 @@ People might feel that the compute shader improvement might seem lower than expe
 
 ### The optimization we've done
 
-#### 1. Compute shader
-
 #### 1. Compute shader data organization
+
+we put the database data and trajectory data into the buffer to the gpu, and compare the compute shader result in the cpu to get the best pose.
 
 ####  2. Waiting current frame - using the previous frame
 <img src="https://github.com/CaballoMa/GPUBased_Emotional_MotionMatching/blob/main/images/workflow3.png" width="800" height="400">
