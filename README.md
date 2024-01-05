@@ -188,11 +188,6 @@ Then we implemented the process that character can choose diff database to searc
 
 ![](results/personized.gif)
 
-[UE analysis tool](https://wiry-desk-002.notion.site/UE5-UE5-61b945c2b40e463dbc83459628e1ce5f)
-
-
-[UE analysis tool2](https://www.bilibili.com/video/BV1kb411o7DU/?vd_source=253f5f84a943bc901c96d75159e98107)
-
 
  
  
