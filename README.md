@@ -188,17 +188,6 @@ Then we implemented the process that character can choose diff database to searc
 
 ![](results/personized.gif)
 
-## Reference
-
-
-[GPU-based Motion Matching for Crowds in the Unreal Engine](https://dl.acm.org/doi/10.1145/3415264.3425474)
-
-[UE compute shader reference 1](https://dev.epicgames.com/community/learning/tutorials/WkwJ/unreal-engine-simple-compute-shader-with-cpu-readback)
-
-[UE compute shader reference 2](https://zhuanlan.zhihu.com/p/608724638)
-
-[UE compute shader reference 3](https://www.notion.so/Compute-Shader-651791c5045c4521ae3f293e41a4cc0a)
-
 [UE analysis tool](https://wiry-desk-002.notion.site/UE5-UE5-61b945c2b40e463dbc83459628e1ce5f)
 
 
