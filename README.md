@@ -4,10 +4,6 @@
 
 ![](results/g100.gif)
 
-### Presentation
-
-[GPU-based NPCs’ Motion Matching with Personalized Animation](https://docs.google.com/presentation/d/1bqu9WO6MdaSDJUJ0BupnrZNoLDoQ_u2QffSNNol0kBY/edit?usp=sharing)
-
 ## Motion Matching Introduction
 
 Motion matching is a data-driven animation technique used predominantly in video games and virtual reality to achieve fluent and vivid character movements. Departing from traditional handcrafted animations, motion matching relies on a vast database of motion capture data. In real-time, the system queries and selects relevant motion data based on the current state and user input, seamlessly blending and adapting animations for a more realistic and dynamic appearance. This approach enhances adaptability to environmental changes, reduces repetitiveness, and contributes to a more immersive and engaging user experience by creating responsive and authentic character animations.
